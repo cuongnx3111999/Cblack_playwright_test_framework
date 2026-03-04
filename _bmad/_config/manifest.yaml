@@ -1,0 +1,22 @@
+installation:
+  version: 6.0.4
+  installDate: 2026-03-04T10:01:37.383Z
+  lastUpdated: 2026-03-04T10:01:37.383Z
+modules:
+  - name: core
+    version: 6.0.4
+    installDate: 2026-03-04T10:01:36.141Z
+    lastUpdated: 2026-03-04T10:01:36.141Z
+    source: built-in
+    npmPackage: null
+    repoUrl: null
+  - name: tea
+    version: 1.5.1
+    installDate: 2026-03-04T10:01:34.423Z
+    lastUpdated: 2026-03-04T10:01:37.383Z
+    source: external
+    npmPackage: bmad-method-test-architecture-enterprise
+    repoUrl: https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise
+ides:
+  - github-copilot
+  - antigravity
