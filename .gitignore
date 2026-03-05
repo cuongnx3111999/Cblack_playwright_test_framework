@@ -1,0 +1,15 @@
+# Ẩn các thư mục file không cần thiết
+node_modules/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Môi trường
+# .env
+# .env.*
+# !.env.example
+
+# File sinh ra từ coverage/report
+coverage/
+monocart-report/

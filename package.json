@@ -1,0 +1,29 @@
+{
+    "name": "cblack-playwright-framework",
+    "version": "1.0.0",
+    "description": "Enterprise-level Playwright E2E testing framework",
+    "main": "index.js",
+    "scripts": {
+        "test": "playwright test",
+        "test:ui": "playwright test --ui",
+        "test:headed": "playwright test --headed",
+        "test:debug": "playwright test --debug",
+        "test:auth": "playwright test tests/e2e/auth",
+        "report": "playwright show-report"
+    },
+    "keywords": [
+        "playwright",
+        "e2e",
+        "automation",
+        "testing"
+    ],
+    "author": "QA Team",
+    "license": "ISC",
+    "devDependencies": {
+        "@playwright/test": "^1.42.0",
+        "@types/node": "^20.11.24",
+        "dotenv": "^16.4.5",
+        "monocart-reporter": "^2.1.2",
+        "typescript": "^5.3.3"
+    }
+}

@@ -1,0 +1,6 @@
+{
+    "emailInput": "#email",
+    "passwordInput": "#password",
+    "loginBtn": "[data-testid='login-btn']",
+    "welcomeTitle": "h1.welcome-message"
+}
