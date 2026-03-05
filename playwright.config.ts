@@ -26,8 +26,11 @@ export default defineConfig({
     /* Cấu hình Reporter thông minh */
     reporter: [
         ['html'],
-        // Comment mở dòng dưới nếu bạn đã cài monocart-reporter:
-        // ['monocart-reporter', { name: "E2E Monocart Report", outputFile: './test-results/report.html' }]
+        // Bật Monocart Reporter làm Reporter chính theo chuẩn
+        ['monocart-reporter', {
+            name: 'E2E Automation Report',
+            outputFile: './test-results/report.html'
+        }]
     ],
 
     /* Cấu hình dùng chung cho toàn bộ dự án */
@@ -42,14 +45,38 @@ export default defineConfig({
         video: 'off',
     },
 
-    /* Cấu hình Trình duyệt */
+    /* Cấu hình Trình duyệt & Các dự án liên đới */
     projects: [
+        // 1. Phân luồng Global Setup (Nếu các site dùng chung 1 hệ thống SSO, hoặc bạn có thể tách ra setup riêng)
         {
-            name: 'chromium',
-            use: { ...devices['Desktop Chrome'] },
+            name: 'setup',
+            testMatch: /.*\.setup\.ts/,
         },
-        // Bạn có thể bật thêm Firefox, Safari tùy ý sau này
-        // { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-        // { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+
+        // --- DỰ ÁN 1: HỆ THỐNG CRM ADMIN ---
+        {
+            name: 'CRM-Admin',
+            testDir: './tests/e2e/crm-admin',     // Chỉ chạy test trong thư mục này
+            use: {
+                ...devices['Desktop Chrome'],
+                baseURL: process.env.CRM_BASE_URL || 'https://admin.example.com',
+                // Tận dụng chung file session đăng nhập (giả định dùng chung hệ thống Auth)
+                storageState: '.auth/user.json',
+            },
+            dependencies: ['setup'],
+        },
+
+        // --- DỰ ÁN 2: CỔNG THÔNG TIN KHÁCH HÀNG (PORTAL) ---
+        {
+            name: 'Portal-User',
+            testDir: './tests/e2e/portal-user',   // Chỉ chạy test trong thư mục này
+            use: {
+                ...devices['Desktop Chrome'],
+                baseURL: process.env.PORTAL_BASE_URL || 'https://portal.example.com',
+                // Ví dụ: Portal không cần cookie đăng nhập mặc định (hoặc dùng cookie khác)
+                storageState: undefined,
+            },
+            // Không set dependencies: ['setup'] nếu như dự án này test tự do
+        },
     ],
 });

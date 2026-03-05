@@ -1,0 +1,52 @@
+name: Playwright E2E Multi-Projects
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  # Kích hoạt thủ công cho phép chọn Project muốn chạy
+  workflow_dispatch:
+    inputs:
+      project:
+        description: 'Chọn Project để chạy (để trống để chạy toàn bộ)'
+        required: false
+        type: choice
+        options:
+          - ''
+          - CRM-Admin
+          - Portal-User
+
+jobs:
+  e2e-tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps chromium
+      
+    - name: Run Playwright tests
+      run: |
+        if [ -n "${{ github.event.inputs.project }}" ]; then
+          npx playwright test --project="${{ github.event.inputs.project }}"
+        else
+          npx playwright test
+        fi
+      
+    - name: Upload Report to Artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-monocart-report
+        path: test-results/
+        retention-days: 14

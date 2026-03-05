@@ -13,3 +13,4 @@ playwright/.cache/
 # File sinh ra từ coverage/report
 coverage/
 monocart-report/
+# .auth/

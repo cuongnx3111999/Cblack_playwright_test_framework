@@ -1,0 +1,36 @@
+# Worklog: Khởi tạo Kiến trúc E2E Playwright
+
+Tài liệu này đóng vai trò như một sổ nhật ký (Worklog) lưu trữ lại các hành động cấu hình hệ thống thực tế đã diễn ra, tiện lợi cho việc tracking và bàn giao dự án.
+
+## [2026-03-05] Khởi tạo Nền tảng và Cấu hình Cốt lõi
+
+### 1. Phân tích Kiến trúc
+- **Input:** Tài liệu [E2E_ARCHITECTURE_STANDARDS.md](file:///c:/Users/cuongnx/Desktop/working/Cblack_playwright_test_framework/E2E_ARCHITECTURE_STANDARDS.md).
+- **Action:** Đọc hiểu và hệ thống hóa mô hình 5 phân lớp: `Data -> Pages -> Flows -> Fixtures -> Tests`.
+
+### 2. Scaffold Khung Thư Mục & Boilerplate 
+- Tạo thư mục lõi (`pages/`, `flows/`, `fixtures/`, `tests/e2e/`, `data/locators/`, `config/setup/`).
+- Tạo file hằng số `data/users.constants.ts` và Locator mẫu `data/locators/login.json`.
+- Viết file Class mẫu `LoginPage.ts` (chỉ chứa elements/actions cơ bản).
+- Viết file Flow mẫu `LoginFlow.ts` (Nối các bước để tạo thành hành vi login hoàn chỉnh).
+- Khởi tạo `fixtures/base.fixture.ts` để tiêm (inject) `LoginFlow` vào context của Playwright.
+- Tạo một kịch bản kiểm thử giả định tối giản tại `tests/e2e/auth/auth.spec.ts`.
+
+### 3. Thiết lập Môi trường hệ thống (Node.js)
+- Khởi tạo tệp `package.json` với các dependency: `@playwright/test`, `dotenv`, `monocart-reporter`.
+- Bổ sung cấu hình shortcut npm scripts: `npm run test`, `npm run test:ui`, `npm run report`.
+- Định nghĩa file `.gitignore` để ẩn thư mục nhạy cảm và cache báo cáo lỗi.
+- Định nghĩa file `.env` mẫu để lưu biến môi trường cục bộ/Local.
+- User thực thi thành công `npm install` và `npx playwright install`.
+
+### 4. Thiết lập Đăng Nhập Một Lần (Global SSO) & State
+- Tạo file cấu hình `config/setup/global.setup.ts`.
+- Bổ sung quyền ghi file session cookie vào `.auth/user.json` và đưa `.auth` vào nhánh ignore git.
+- Nâng cấp `playwright.config.ts`:
+  - Thêm dự án ảo `setup` để nạp cookie.
+  - Sửa dự án `chromium` để khai báo `dependencies: ['setup']` và thừa kế `storageState: '.auth/user.json'`.
+  - Cấu hình thư viện `dotenv` để framework chủ động đọc biến URL/Tài khoản từ `.env`.
+  - Khích hoạt plugin `monocart-reporter`.
+
+---
+*Worklog sẽ tiếp tục được cập nhật ở các phiên làm việc sau...*

@@ -1,0 +1,12 @@
+[
+    {
+        "scenario": "valid_user",
+        "email": "test@domain.com",
+        "expectedPlan": "Premium"
+    },
+    {
+        "scenario": "invalid_user",
+        "email": "wrong@domain.com",
+        "expectedPlan": "None"
+    }
+]
