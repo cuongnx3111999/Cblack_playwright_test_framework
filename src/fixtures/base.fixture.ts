@@ -1,5 +1,5 @@
 import { test as base } from '@playwright/test';
-import { LoginFlow } from '../flows/LoginFlow';
+import { LoginFlow } from '@/flows/LoginFlow';
 
 // Khai báo các types fixture cho dự án
 type AppFixtures = {

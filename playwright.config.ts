@@ -8,7 +8,7 @@ const envPath = process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env';
 dotenv.config({ path: path.resolve(__dirname, envPath) });
 
 export default defineConfig({
-    testDir: './tests',
+    testDir: './src/tests',
     /* Tối ưu thời gian chạy, Playwright mặc định tự động Wait cho Elements */
     timeout: 30 * 1000,
     expect: {
@@ -59,7 +59,7 @@ export default defineConfig({
         // --- DỰ ÁN 1: HỆ THỐNG CRM ADMIN ---
         {
             name: 'CRM-Admin',
-            testDir: './tests/e2e/crm-admin', // Chỉ chạy test trong thư mục này
+            testDir: './src/tests/e2e/crm-admin', // Chỉ chạy test trong thư mục này
             use: {
                 ...devices['Desktop Chrome'],
                 baseURL: process.env.CRM_BASE_URL || 'https://admin.example.com',
@@ -72,7 +72,7 @@ export default defineConfig({
         // --- DỰ ÁN 2: CỔNG THÔNG TIN KHÁCH HÀNG (PORTAL) ---
         {
             name: 'Portal-User',
-            testDir: './tests/e2e/portal-user', // Chỉ chạy test trong thư mục này
+            testDir: './src/tests/e2e/portal-user', // Chỉ chạy test trong thư mục này
             use: {
                 ...devices['Desktop Chrome'],
                 baseURL: process.env.PORTAL_BASE_URL || 'https://portal.example.com',

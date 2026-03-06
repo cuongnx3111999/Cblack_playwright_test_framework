@@ -1,5 +1,5 @@
-import { test, expect } from '../../../fixtures/base.fixture';
-import { USERS } from '../../../data/users.constants';
+import { test, expect } from '@/fixtures/base.fixture';
+import { USERS } from '@/data/users.constants';
 
 test.describe('CRM Admin - Authentication', () => {
     test('Should login to CRM Dashboard successfully with Admin account', async ({ loginFlow }) => {

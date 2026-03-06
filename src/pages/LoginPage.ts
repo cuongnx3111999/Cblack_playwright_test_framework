@@ -1,5 +1,5 @@
 import { Page, Locator } from '@playwright/test';
-import locators from '../data/locators/login.json';
+import { DataReader } from '@/utils/dataReader';
 
 export class LoginPage {
     readonly page: Page;
@@ -10,6 +10,10 @@ export class LoginPage {
 
     constructor(page: Page) {
         this.page = page;
+
+        // Fetch specific JSON data only when this Page is instantiated
+        const locators = DataReader.getJsonData('locators/login.json');
+
         this.emailInput = page.locator(locators.emailInput);
         this.passwordInput = page.locator(locators.passwordInput);
         this.loginBtn = page.locator(locators.loginBtn);

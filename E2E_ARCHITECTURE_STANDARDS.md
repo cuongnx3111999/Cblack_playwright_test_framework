@@ -12,6 +12,7 @@ Tài liệu này định nghĩa quy chuẩn kiến trúc chuyên nghiệp (Enter
 2.  **No Hardcoding:** Tuyệt đối không hardcode URLs, thông tin user, hay Locators trực tiếp vào Script. Mọi thứ phải cấu hình qua Constant / JSON Test Data.
 3.  **Dependency Injection:** Khai thác sức mạnh của `Custom Fixtures` trong Playwright để tự khởi tạo đối tượng thay vì `new Class()` thủ công trong từng file test.
 4.  **Expectations belong to Tests:** Biểu thức `expect()` (Assertion) CHỈ ĐƯỢC PHÉP nằm ở cấp độ Test Case. Tầng POM và Flow tuyệt đối không chứa Assertions để bảo toàn tính tái sử dụng.
+5.  **Fast Fail (Thất bại nhanh):** Hạn chế tối đa sử dụng Fallback (giá trị dự phòng). Nếu cấu hình môi trường (ví dụ biến môi trường lấy Data) bị thiếu, framework phải quăng lỗi (throw error) và dừng ngay lập tức để tránh bỏ sót lỗi chạy ngầm do dùng nhầm data mặc định.
 
 ---
 
@@ -20,29 +21,20 @@ Tài liệu này định nghĩa quy chuẩn kiến trúc chuyên nghiệp (Enter
 Framework Automation được "đóng gói" như một workspace độc lập (ví dụ `apps/e2e-tests/` trong Monorepo) để CI/CD có thể kích hoạt riêng biệt mà không ảnh hưởng target apps. Đặc biệt, **do bản chất quy hoạch Monorepo**, các subproject trong hệ sinh thái hoàn toàn có thể Import và sử dụng chung (Share) các thư mục `utils`, `helpers` hoặc các hằng số của nhau một cách liền mạch, tránh viết lại code dư thừa.
 
 ```text
-e2e-tests/
-├── tests/
-│   ├── e2e/                       # Test Scripts chính (phân theo tính năng/nghiệp vụ)
-│   │   ├── auth/
-│   │   └── checkout/
-│   ├── api/                       # API tests (nếu tách biệt)
-│   └── visual/                    # Visual/screenshot baseline check
-├── pages/                         # Page Object Model (Dumb Pages)
-│   ├── BasePage.ts
-│   └── components/
-├── flows/                         # Business flows (User Journeys)
-│   └── LoginFlow.ts
-├── utils/                         # Helper functions (Date, Random, API Helpers)
-├── data/                          # Dữ liệu thử nghiệm (JSON/CSV)
-│   └── locators/                  # Chứa Locators JSON file
-├── fixtures/                      # Custom Test Fixtures (Khởi tạo states)
-│   └── base.fixture.ts
-├── config/                        # Biến môi trường & cấu hình Dev/Stag/Prod
-│   ├── base.config.ts
-│   └── setup/
-│       ├── global.setup.ts
-│       └── global.teardown.ts
-└── playwright.config.ts           # Cấu hình Playwright tổng
+Cblack_playwright_test_framework/
+├── src/                      # Bắt buộc: Toàn bộ code của framework nằm ở đây
+│   ├── data/                 # Test data (JSON, CSV, Faker generators)
+│   ├── fixtures/             # Playwright custom fixtures
+│   ├── flows/                # Business flows / Multi-page interactions
+│   ├── pages/                # Page Object Models (POM) - Locators & Actions
+│   ├── tests/                # Chứa các file chạy test thực tế (*.spec.ts)
+│   ├── utils/                # Các file tiện ích (date formatter, string helper...)
+│   └── types/                # TypeScript interfaces/types định nghĩa chung
+├── config/                   # (Tùy chọn) Chứa các file config môi trường (dev, staging, prod)
+├── .github/                  # Cấu hình CI/CD (GitHub Actions)
+├── package.json
+├── playwright.config.ts      # Chỉnh testDir trỏ vào './src/tests'
+└── tsconfig.json             # Cấu hình path alias '@/*' -> './src/*'
 ```
 
 ---
@@ -67,7 +59,7 @@ Tránh gõ cứng ký tự Selector vào code. Các file Class Page sẽ đọc 
 Chỉ chứa các hàm tương tác cơ bản (Điền, Bấm, Lấy Text).
 
 ```typescript
-import locators from '../../data/locators/login.json';
+import locators from '@/data/locators/login.json';
 
 export class LoginPage {
     constructor(public readonly page: Page) {}
@@ -87,7 +79,7 @@ Thay vì thiết lập thủ công các class bằng lệnh `new` ở mỗi file
 ```typescript
 // fixtures/base.fixture.ts
 import { test as base } from '@playwright/test';
-import { LoginFlow } from '../flows/LoginFlow';
+import { LoginFlow } from '@/flows/LoginFlow';
 
 type AppFixtures = {
     loginFlow: LoginFlow;
@@ -105,8 +97,8 @@ Test file cuối cùng sẽ cực kỳ ngắn gọn, dễ đọc:
 
 ```typescript
 // tests/e2e/auth.spec.ts
-import { test, expect } from '../../fixtures/base.fixture';
-import { USERS } from '../../data/users.constants';
+import { test, expect } from '@/fixtures/base.fixture';
+import { USERS } from '@/data/users.constants';
 
 test('Should login successfully', async ({ loginFlow }) => {
     const dashboard = await loginFlow.loginAsUser(USERS.ADMIN);
