@@ -12,7 +12,7 @@ export const test = base.extend<AppFixtures>({
         // Đoạn code này chỉ chạy khi file test thực sự khai báo tham số { loginFlow }
         const loginFlow = new LoginFlow(page);
         await use(loginFlow);
-    }
+    },
 });
 
 // Re-export expect để file test sử dụng kèm test có chứa fixture

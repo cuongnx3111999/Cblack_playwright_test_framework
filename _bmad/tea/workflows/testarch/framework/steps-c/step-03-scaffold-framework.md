@@ -43,68 +43,78 @@ Generate the test directory structure, configuration files, fixtures, factories,
 
 ```javascript
 const parseBooleanFlag = (value, defaultValue = true) => {
-  if (typeof value === 'string') {
-    const normalized = value.trim().toLowerCase();
-    if (['false', '0', 'off', 'no'].includes(normalized)) return false;
-    if (['true', '1', 'on', 'yes'].includes(normalized)) return true;
-  }
-  if (value === undefined || value === null) return defaultValue;
-  return Boolean(value);
+    if (typeof value === 'string') {
+        const normalized = value.trim().toLowerCase();
+        if (['false', '0', 'off', 'no'].includes(normalized)) return false;
+        if (['true', '1', 'on', 'yes'].includes(normalized)) return true;
+    }
+    if (value === undefined || value === null) return defaultValue;
+    return Boolean(value);
 };
 
 const orchestrationContext = {
-  config: {
-    execution_mode: config.tea_execution_mode || 'auto', // "auto" | "subagent" | "agent-team" | "sequential"
-    capability_probe: parseBooleanFlag(config.tea_capability_probe, true), // supports booleans and "false"/"true" strings
-  },
-  timestamp: new Date().toISOString().replace(/[:.]/g, '-'),
+    config: {
+        execution_mode: config.tea_execution_mode || 'auto', // "auto" | "subagent" | "agent-team" | "sequential"
+        capability_probe: parseBooleanFlag(config.tea_capability_probe, true), // supports booleans and "false"/"true" strings
+    },
+    timestamp: new Date().toISOString().replace(/[:.]/g, '-'),
 };
 
 const normalizeUserExecutionMode = (mode) => {
-  if (typeof mode !== 'string') return null;
-  const normalized = mode.trim().toLowerCase().replace(/[-_]/g, ' ').replace(/\s+/g, ' ');
+    if (typeof mode !== 'string') return null;
+    const normalized = mode.trim().toLowerCase().replace(/[-_]/g, ' ').replace(/\s+/g, ' ');
 
-  if (normalized === 'auto') return 'auto';
-  if (normalized === 'sequential') return 'sequential';
-  if (normalized === 'subagent' || normalized === 'sub agent' || normalized === 'subagents' || normalized === 'sub agents') {
-    return 'subagent';
-  }
-  if (normalized === 'agent team' || normalized === 'agent teams' || normalized === 'agentteam') {
-    return 'agent-team';
-  }
+    if (normalized === 'auto') return 'auto';
+    if (normalized === 'sequential') return 'sequential';
+    if (
+        normalized === 'subagent' ||
+        normalized === 'sub agent' ||
+        normalized === 'subagents' ||
+        normalized === 'sub agents'
+    ) {
+        return 'subagent';
+    }
+    if (normalized === 'agent team' || normalized === 'agent teams' || normalized === 'agentteam') {
+        return 'agent-team';
+    }
 
-  return null;
+    return null;
 };
 
 const normalizeConfigExecutionMode = (mode) => {
-  if (mode === 'subagent') return 'subagent';
-  if (mode === 'auto' || mode === 'sequential' || mode === 'subagent' || mode === 'agent-team') {
-    return mode;
-  }
-  return null;
+    if (mode === 'subagent') return 'subagent';
+    if (mode === 'auto' || mode === 'sequential' || mode === 'subagent' || mode === 'agent-team') {
+        return mode;
+    }
+    return null;
 };
 
 // Explicit user instruction in the active run takes priority over config.
-const explicitModeFromUser = normalizeUserExecutionMode(runtime.getExplicitExecutionModeHint?.() || null);
+const explicitModeFromUser = normalizeUserExecutionMode(
+    runtime.getExplicitExecutionModeHint?.() || null,
+);
 
-const requestedMode = explicitModeFromUser || normalizeConfigExecutionMode(orchestrationContext.config.execution_mode) || 'auto';
+const requestedMode =
+    explicitModeFromUser ||
+    normalizeConfigExecutionMode(orchestrationContext.config.execution_mode) ||
+    'auto';
 const probeEnabled = orchestrationContext.config.capability_probe;
 
 const supports = { subagent: false, agentTeam: false };
 if (probeEnabled) {
-  supports.subagent = runtime.canLaunchSubagents?.() === true;
-  supports.agentTeam = runtime.canLaunchAgentTeams?.() === true;
+    supports.subagent = runtime.canLaunchSubagents?.() === true;
+    supports.agentTeam = runtime.canLaunchAgentTeams?.() === true;
 }
 
 let resolvedMode = requestedMode;
 if (requestedMode === 'auto') {
-  if (supports.agentTeam) resolvedMode = 'agent-team';
-  else if (supports.subagent) resolvedMode = 'subagent';
-  else resolvedMode = 'sequential';
+    if (supports.agentTeam) resolvedMode = 'agent-team';
+    else if (supports.subagent) resolvedMode = 'subagent';
+    else resolvedMode = 'sequential';
 } else if (probeEnabled && requestedMode === 'agent-team' && !supports.agentTeam) {
-  resolvedMode = supports.subagent ? 'subagent' : 'sequential';
+    resolvedMode = supports.subagent ? 'subagent' : 'sequential';
 } else if (probeEnabled && requestedMode === 'subagent' && !supports.subagent) {
-  resolvedMode = 'sequential';
+    resolvedMode = 'sequential';
 }
 ```
 
@@ -289,21 +299,21 @@ Regardless of mode, outputs must be identical in structure and quality.
 
 - **If `{outputFile}` does not exist** (first save), create it with YAML frontmatter:
 
-  ```yaml
-  ---
-  stepsCompleted: ['step-03-scaffold-framework']
-  lastStep: 'step-03-scaffold-framework'
-  lastSaved: '{date}'
-  ---
-  ```
+    ```yaml
+    ---
+    stepsCompleted: ['step-03-scaffold-framework']
+    lastStep: 'step-03-scaffold-framework'
+    lastSaved: '{date}'
+    ---
+    ```
 
-  Then write this step's output below the frontmatter.
+    Then write this step's output below the frontmatter.
 
 - **If `{outputFile}` already exists**, update:
-  - Add `'step-03-scaffold-framework'` to `stepsCompleted` array (only if not already present)
-  - Set `lastStep: 'step-03-scaffold-framework'`
-  - Set `lastSaved: '{date}'`
-  - Append this step's output to the appropriate section of the document.
+    - Add `'step-03-scaffold-framework'` to `stepsCompleted` array (only if not already present)
+    - Set `lastStep: 'step-03-scaffold-framework'`
+    - Set `lastSaved: '{date}'`
+    - Append this step's output to the appropriate section of the document.
 
 Load next step: `{nextStepFile}`
 

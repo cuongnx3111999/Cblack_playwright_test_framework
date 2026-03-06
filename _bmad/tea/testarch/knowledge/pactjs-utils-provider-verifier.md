@@ -31,17 +31,17 @@ import { buildVerifierOptions, createRequestFilter } from '@seontechnologies/pac
 import type { StateHandlers } from '@seontechnologies/pactjs-utils';
 
 const stateHandlers: StateHandlers = {
-  'movie with id 1 exists': {
-    setup: async (params) => {
-      await db.seed({ movies: [{ id: params?.id ?? 1, name: 'Inception' }] });
+    'movie with id 1 exists': {
+        setup: async (params) => {
+            await db.seed({ movies: [{ id: params?.id ?? 1, name: 'Inception' }] });
+        },
+        teardown: async () => {
+            await db.clean('movies');
+        },
     },
-    teardown: async () => {
-      await db.clean('movies');
+    'no movies exist': async () => {
+        await db.clean('movies');
     },
-  },
-  'no movies exist': async () => {
-    await db.clean('movies');
-  },
 };
 
 // buildVerifierOptions reads these env vars automatically:
@@ -53,13 +53,13 @@ const stateHandlers: StateHandlers = {
 // - CI (publish verification results if "true")
 
 const opts = buildVerifierOptions({
-  provider: 'SampleMoviesAPI',
-  port: '3001',
-  includeMainAndDeployed: process.env.PACT_BREAKING_CHANGE !== 'true',
-  stateHandlers,
-  requestFilter: createRequestFilter({
-    tokenGenerator: () => process.env.TEST_AUTH_TOKEN ?? 'test-token',
-  }),
+    provider: 'SampleMoviesAPI',
+    port: '3001',
+    includeMainAndDeployed: process.env.PACT_BREAKING_CHANGE !== 'true',
+    stateHandlers,
+    requestFilter: createRequestFilter({
+        tokenGenerator: () => process.env.TEST_AUTH_TOKEN ?? 'test-token',
+    }),
 });
 
 await new Verifier(opts).verifyProvider();
@@ -83,16 +83,16 @@ import { buildVerifierOptions } from '@seontechnologies/pactjs-utils';
 // When PACT_BROKER_BASE_URL is NOT set, buildVerifierOptions
 // falls back to local pact file verification
 const opts = buildVerifierOptions({
-  provider: 'SampleMoviesAPI',
-  port: '3001',
-  includeMainAndDeployed: true,
-  // Specify local pact files directly — skips broker entirely
-  pactUrls: ['./pacts/movie-web-SampleMoviesAPI.json'],
-  stateHandlers: {
-    'movie exists': async (params) => {
-      await db.seed({ movies: [{ id: params?.id }] });
+    provider: 'SampleMoviesAPI',
+    port: '3001',
+    includeMainAndDeployed: true,
+    // Specify local pact files directly — skips broker entirely
+    pactUrls: ['./pacts/movie-web-SampleMoviesAPI.json'],
+    stateHandlers: {
+        'movie exists': async (params) => {
+            await db.seed({ movies: [{ id: params?.id }] });
+        },
     },
-  },
 });
 
 await new Verifier(opts).verifyProvider();
@@ -105,27 +105,27 @@ import { Verifier } from '@pact-foundation/pact';
 import { buildMessageVerifierOptions } from '@seontechnologies/pactjs-utils';
 
 const opts = buildMessageVerifierOptions({
-  provider: 'OrderEventsProducer',
-  includeMainAndDeployed: process.env.PACT_BREAKING_CHANGE !== 'true',
-  // Message handlers return the message content that the provider would produce
-  messageProviders: {
-    'an order created event': async () => ({
-      orderId: 'order-123',
-      userId: 'user-456',
-      items: [{ productId: 'prod-789', quantity: 2 }],
-      createdAt: new Date().toISOString(),
-    }),
-    'an order cancelled event': async () => ({
-      orderId: 'order-123',
-      reason: 'customer_request',
-      cancelledAt: new Date().toISOString(),
-    }),
-  },
-  stateHandlers: {
-    'order exists': async (params) => {
-      await db.seed({ orders: [{ id: params?.orderId }] });
+    provider: 'OrderEventsProducer',
+    includeMainAndDeployed: process.env.PACT_BREAKING_CHANGE !== 'true',
+    // Message handlers return the message content that the provider would produce
+    messageProviders: {
+        'an order created event': async () => ({
+            orderId: 'order-123',
+            userId: 'user-456',
+            items: [{ productId: 'prod-789', quantity: 2 }],
+            createdAt: new Date().toISOString(),
+        }),
+        'an order cancelled event': async () => ({
+            orderId: 'order-123',
+            reason: 'customer_request',
+            cancelledAt: new Date().toISOString(),
+        }),
     },
-  },
+    stateHandlers: {
+        'order exists': async (params) => {
+            await db.seed({ orders: [{ id: params?.orderId }] });
+        },
+    },
 });
 
 await new Verifier(opts).verifyProvider();
@@ -158,12 +158,12 @@ await new Verifier(opts).verifyProvider();
 const isBreakingChange = process.env.PACT_BREAKING_CHANGE === 'true';
 
 const opts = buildVerifierOptions({
-  provider: 'SampleMoviesAPI',
-  port: '3001',
-  includeMainAndDeployed: !isBreakingChange, // false during breaking changes
-  stateHandlers: {
-    /* ... */
-  },
+    provider: 'SampleMoviesAPI',
+    port: '3001',
+    includeMainAndDeployed: !isBreakingChange, // false during breaking changes
+    stateHandlers: {
+        /* ... */
+    },
 });
 // When includeMainAndDeployed is false (breaking change):
 //   selectors = [{ matchingBranch: true }]
@@ -179,16 +179,16 @@ import type { VerifierOptions } from '@pact-foundation/pact';
 
 // For advanced use cases — mutates the options object in-place (returns void)
 const options: VerifierOptions = {
-  provider: 'SampleMoviesAPI',
-  providerBaseUrl: 'http://localhost:3001',
+    provider: 'SampleMoviesAPI',
+    providerBaseUrl: 'http://localhost:3001',
 };
 
 handlePactBrokerUrlAndSelectors({
-  pactPayloadUrl: process.env.PACT_PAYLOAD_URL,
-  pactBrokerUrl: process.env.PACT_BROKER_BASE_URL,
-  consumer: undefined, // or specific consumer name
-  includeMainAndDeployed: true,
-  options, // mutated in-place: sets pactBrokerUrl, consumerVersionSelectors, or pactUrls
+    pactPayloadUrl: process.env.PACT_PAYLOAD_URL,
+    pactBrokerUrl: process.env.PACT_BROKER_BASE_URL,
+    consumer: undefined, // or specific consumer name
+    includeMainAndDeployed: true,
+    options, // mutated in-place: sets pactBrokerUrl, consumerVersionSelectors, or pactUrls
 });
 
 // After call, options has been mutated with:
@@ -256,25 +256,25 @@ const tags = getProviderVersionTags();
 ```typescript
 // ❌ Manual environment variable handling
 const opts: VerifierOptions = {
-  provider: 'my-api',
-  providerBaseUrl: 'http://localhost:3001',
-  pactBrokerUrl: process.env.PACT_BROKER_BASE_URL,
-  pactBrokerToken: process.env.PACT_BROKER_TOKEN,
-  publishVerificationResult: process.env.CI === 'true',
-  providerVersion: process.env.GIT_SHA || process.env.GITHUB_SHA || 'dev',
-  providerVersionBranch: process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME,
-  consumerVersionSelectors:
-    process.env.PACT_BREAKING_CHANGE === 'true'
-      ? [{ matchingBranch: true }]
-      : [{ matchingBranch: true }, { mainBranch: true }, { deployedOrReleased: true }],
-  pactUrls: process.env.PACT_PAYLOAD_URL ? [process.env.PACT_PAYLOAD_URL] : undefined,
-  stateHandlers: {
-    /* ... */
-  },
-  requestFilter: (req, res, next) => {
-    req.headers['authorization'] = `Bearer ${process.env.TEST_TOKEN}`;
-    next();
-  },
+    provider: 'my-api',
+    providerBaseUrl: 'http://localhost:3001',
+    pactBrokerUrl: process.env.PACT_BROKER_BASE_URL,
+    pactBrokerToken: process.env.PACT_BROKER_TOKEN,
+    publishVerificationResult: process.env.CI === 'true',
+    providerVersion: process.env.GIT_SHA || process.env.GITHUB_SHA || 'dev',
+    providerVersionBranch: process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME,
+    consumerVersionSelectors:
+        process.env.PACT_BREAKING_CHANGE === 'true'
+            ? [{ matchingBranch: true }]
+            : [{ matchingBranch: true }, { mainBranch: true }, { deployedOrReleased: true }],
+    pactUrls: process.env.PACT_PAYLOAD_URL ? [process.env.PACT_PAYLOAD_URL] : undefined,
+    stateHandlers: {
+        /* ... */
+    },
+    requestFilter: (req, res, next) => {
+        req.headers['authorization'] = `Bearer ${process.env.TEST_TOKEN}`;
+        next();
+    },
 };
 ```
 
@@ -283,15 +283,15 @@ const opts: VerifierOptions = {
 ```typescript
 // ✅ All env var logic handled internally
 const opts = buildVerifierOptions({
-  provider: 'my-api',
-  port: '3001',
-  includeMainAndDeployed: process.env.PACT_BREAKING_CHANGE !== 'true',
-  stateHandlers: {
-    /* ... */
-  },
-  requestFilter: createRequestFilter({
-    tokenGenerator: () => process.env.TEST_TOKEN ?? 'test-token',
-  }),
+    provider: 'my-api',
+    port: '3001',
+    includeMainAndDeployed: process.env.PACT_BREAKING_CHANGE !== 'true',
+    stateHandlers: {
+        /* ... */
+    },
+    requestFilter: createRequestFilter({
+        tokenGenerator: () => process.env.TEST_TOKEN ?? 'test-token',
+    }),
 });
 ```
 
@@ -307,7 +307,7 @@ consumerVersionSelectors: [{ mainBranch: true }, { deployedOrReleased: true }],
 ```typescript
 // ✅ Selector strategy adapts to PACT_BREAKING_CHANGE env var
 const opts = buildVerifierOptions({
-  /* ... */
+    /* ... */
 });
 // Selectors chosen automatically based on environment
 ```

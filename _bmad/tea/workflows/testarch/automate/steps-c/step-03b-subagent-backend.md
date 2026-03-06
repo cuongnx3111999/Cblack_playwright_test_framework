@@ -152,41 +152,45 @@ Write JSON to temp file: `/tmp/tea-automate-backend-tests-{{timestamp}}.json`
 
 ```json
 {
-  "subagentType": "backend",
-  "testsGenerated": [
-    {
-      "file": "tests/unit/test_user_service.py",
-      "content": "[full test file content]",
-      "description": "Unit tests for UserService",
-      "priority_coverage": {
-        "P0": 3,
-        "P1": 2,
-        "P2": 1,
-        "P3": 0
-      }
+    "subagentType": "backend",
+    "testsGenerated": [
+        {
+            "file": "tests/unit/test_user_service.py",
+            "content": "[full test file content]",
+            "description": "Unit tests for UserService",
+            "priority_coverage": {
+                "P0": 3,
+                "P1": 2,
+                "P2": 1,
+                "P3": 0
+            }
+        },
+        {
+            "file": "tests/integration/test_user_repository.py",
+            "content": "[full test file content]",
+            "description": "Integration tests for user database operations",
+            "priority_coverage": {
+                "P0": 1,
+                "P1": 2,
+                "P2": 1,
+                "P3": 0
+            }
+        }
+    ],
+    "coverageSummary": {
+        "totalTests": 15,
+        "testLevels": ["unit", "integration", "contract"],
+        "fixtureNeeds": ["databaseFixture", "userFactory", "mockHttpClient"]
     },
-    {
-      "file": "tests/integration/test_user_repository.py",
-      "content": "[full test file content]",
-      "description": "Integration tests for user database operations",
-      "priority_coverage": {
-        "P0": 1,
-        "P1": 2,
-        "P2": 1,
-        "P3": 0
-      }
-    }
-  ],
-  "coverageSummary": {
-    "totalTests": 15,
-    "testLevels": ["unit", "integration", "contract"],
-    "fixtureNeeds": ["databaseFixture", "userFactory", "mockHttpClient"]
-  },
-  "status": "complete",
-  "success": true,
-  "subagent": "backend-tests",
-  "knowledge_fragments_used": ["test-levels-framework", "test-priorities-matrix", "data-factories"],
-  "summary": "Generated 15 backend test cases (10 unit, 4 integration, 1 contract)"
+    "status": "complete",
+    "success": true,
+    "subagent": "backend-tests",
+    "knowledge_fragments_used": [
+        "test-levels-framework",
+        "test-priorities-matrix",
+        "data-factories"
+    ],
+    "summary": "Generated 15 backend test cases (10 unit, 4 integration, 1 contract)"
 }
 ```
 
@@ -194,20 +198,20 @@ Write JSON to temp file: `/tmp/tea-automate-backend-tests-{{timestamp}}.json`
 
 ```json
 {
-  "subagentType": "backend",
-  "testsGenerated": [],
-  "coverageSummary": {
-    "totalTests": 0,
-    "testLevels": [],
-    "fixtureNeeds": []
-  },
-  "status": "partial",
-  "success": false,
-  "subagent": "backend-tests",
-  "error": "Error message describing what went wrong",
-  "partial_output": {
-    /* any tests generated before error */
-  }
+    "subagentType": "backend",
+    "testsGenerated": [],
+    "coverageSummary": {
+        "totalTests": 0,
+        "testLevels": [],
+        "fixtureNeeds": []
+    },
+    "status": "partial",
+    "success": false,
+    "subagent": "backend-tests",
+    "error": "Error message describing what went wrong",
+    "partial_output": {
+        /* any tests generated before error */
+    }
 }
 ```
 

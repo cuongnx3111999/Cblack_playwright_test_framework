@@ -42,18 +42,18 @@ Note: This workflow does not generate tests. If gaps exist, run `*atdd` or `*aut
 
 - **Coverage:** {COVERAGE_STATUS} {STATUS_ICON}
 - **Tests:**
-  - `{TEST_ID}` - {TEST_FILE}:{LINE}
-    - **Given:** {GIVEN}
-    - **When:** {WHEN}
-    - **Then:** {THEN}
-  - `{TEST_ID_2}` - {TEST_FILE_2}:{LINE}
-    - **Given:** {GIVEN_2}
-    - **When:** {WHEN_2}
-    - **Then:** {THEN_2}
+    - `{TEST_ID}` - {TEST_FILE}:{LINE}
+        - **Given:** {GIVEN}
+        - **When:** {WHEN}
+        - **Then:** {THEN}
+    - `{TEST_ID_2}` - {TEST_FILE_2}:{LINE}
+        - **Given:** {GIVEN_2}
+        - **When:** {WHEN_2}
+        - **Then:** {THEN_2}
 
 - **Gaps:** (if PARTIAL or UNIT-ONLY or INTEGRATION-ONLY)
-  - Missing: {MISSING_SCENARIO_1}
-  - Missing: {MISSING_SCENARIO_2}
+    - Missing: {MISSING_SCENARIO_1}
+    - Missing: {MISSING_SCENARIO_2}
 
 - **Recommendation:** {RECOMMENDATION_TEXT}
 
@@ -63,14 +63,14 @@ Note: This workflow does not generate tests. If gaps exist, run `*atdd` or `*aut
 
 - **Coverage:** FULL ✅
 - **Tests:**
-  - `1.3-E2E-001` - tests/e2e/auth.spec.ts:12
-    - **Given:** User has valid credentials
-    - **When:** User submits login form
-    - **Then:** User is redirected to dashboard
-  - `1.3-UNIT-001` - tests/unit/auth-service.spec.ts:8
-    - **Given:** Valid email and password hash
-    - **When:** validateCredentials is called
-    - **Then:** Returns user object
+    - `1.3-E2E-001` - tests/e2e/auth.spec.ts:12
+        - **Given:** User has valid credentials
+        - **When:** User submits login form
+        - **Then:** User is redirected to dashboard
+    - `1.3-UNIT-001` - tests/unit/auth-service.spec.ts:8
+        - **Given:** Valid email and password hash
+        - **When:** validateCredentials is called
+        - **Then:** Returns user object
 
 ---
 
@@ -78,16 +78,16 @@ Note: This workflow does not generate tests. If gaps exist, run `*atdd` or `*aut
 
 - **Coverage:** PARTIAL ⚠️
 - **Tests:**
-  - `1.3-E2E-003` - tests/e2e/auth.spec.ts:44
-    - **Given:** User requests password reset
-    - **When:** User clicks reset link in email
-    - **Then:** User can set new password
+    - `1.3-E2E-003` - tests/e2e/auth.spec.ts:44
+        - **Given:** User requests password reset
+        - **When:** User clicks reset link in email
+        - **Then:** User can set new password
 
 - **Gaps:**
-  - Missing: Email delivery validation
-  - Missing: Expired token handling (error path)
-  - Missing: Invalid token handling (security test)
-  - Missing: Unit test for token generation logic
+    - Missing: Email delivery validation
+    - Missing: Expired token handling (error path)
+    - Missing: Invalid token handling (security test)
+    - Missing: Unit test for token generation logic
 
 - **Recommendation:** Add `1.3-API-001` for email service integration testing and `1.3-UNIT-003` for token generation logic. Add `1.3-E2E-004` for error path validation (expired/invalid tokens).
 
@@ -100,10 +100,10 @@ Note: This workflow does not generate tests. If gaps exist, run `*atdd` or `*aut
 {CRITICAL_GAP_COUNT} gaps found. **Do not release until resolved.**
 
 1. **{CRITERION_ID}: {CRITERION_DESCRIPTION}** (P0)
-   - Current Coverage: {COVERAGE_STATUS}
-   - Missing Tests: {MISSING_TEST_DESCRIPTION}
-   - Recommend: {RECOMMENDED_TEST_ID} ({RECOMMENDED_TEST_LEVEL})
-   - Impact: {IMPACT_DESCRIPTION}
+    - Current Coverage: {COVERAGE_STATUS}
+    - Missing Tests: {MISSING_TEST_DESCRIPTION}
+    - Recommend: {RECOMMENDED_TEST_ID} ({RECOMMENDED_TEST_LEVEL})
+    - Impact: {IMPACT_DESCRIPTION}
 
 ---
 
@@ -112,10 +112,10 @@ Note: This workflow does not generate tests. If gaps exist, run `*atdd` or `*aut
 {HIGH_GAP_COUNT} gaps found. **Address before PR merge.**
 
 1. **{CRITERION_ID}: {CRITERION_DESCRIPTION}** (P1)
-   - Current Coverage: {COVERAGE_STATUS}
-   - Missing Tests: {MISSING_TEST_DESCRIPTION}
-   - Recommend: {RECOMMENDED_TEST_ID} ({RECOMMENDED_TEST_LEVEL})
-   - Impact: {IMPACT_DESCRIPTION}
+    - Current Coverage: {COVERAGE_STATUS}
+    - Missing Tests: {MISSING_TEST_DESCRIPTION}
+    - Recommend: {RECOMMENDED_TEST_ID} ({RECOMMENDED_TEST_LEVEL})
+    - Impact: {IMPACT_DESCRIPTION}
 
 ---
 
@@ -124,8 +124,8 @@ Note: This workflow does not generate tests. If gaps exist, run `*atdd` or `*aut
 {MEDIUM_GAP_COUNT} gaps found. **Address in nightly test improvements.**
 
 1. **{CRITERION_ID}: {CRITERION_DESCRIPTION}** (P2)
-   - Current Coverage: {COVERAGE_STATUS}
-   - Recommend: {RECOMMENDED_TEST_ID} ({RECOMMENDED_TEST_LEVEL})
+    - Current Coverage: {COVERAGE_STATUS}
+    - Recommend: {RECOMMENDED_TEST_ID} ({RECOMMENDED_TEST_LEVEL})
 
 ---
 
@@ -134,7 +134,7 @@ Note: This workflow does not generate tests. If gaps exist, run `*atdd` or `*aut
 {LOW_GAP_COUNT} gaps found. **Optional - add if time permits.**
 
 1. **{CRITERION_ID}: {CRITERION_DESCRIPTION}** (P3)
-   - Current Coverage: {COVERAGE_STATUS}
+    - Current Coverage: {COVERAGE_STATUS}
 
 ---
 
@@ -144,22 +144,22 @@ Note: This workflow does not generate tests. If gaps exist, run `*atdd` or `*aut
 
 - Endpoints without direct API tests: {endpoint_gap_count}
 - Examples:
-  - {endpoint_gap_1}
-  - {endpoint_gap_2}
+    - {endpoint_gap_1}
+    - {endpoint_gap_2}
 
 #### Auth/Authz Negative-Path Gaps
 
 - Criteria missing denied/invalid-path tests: {auth_negative_gap_count}
 - Examples:
-  - {auth_gap_1}
-  - {auth_gap_2}
+    - {auth_gap_1}
+    - {auth_gap_2}
 
 #### Happy-Path-Only Criteria
 
 - Criteria missing error/edge scenarios: {happy_path_only_gap_count}
 - Examples:
-  - {happy_path_gap_1}
-  - {happy_path_gap_2}
+    - {happy_path_gap_1}
+    - {happy_path_gap_2}
 
 ---
 
@@ -209,7 +209,7 @@ Note: This workflow does not generate tests. If gaps exist, run `*atdd` or `*aut
 #### Unacceptable Duplication ⚠️
 
 - {CRITERION_ID}: Same validation at E2E and Component level
-  - Recommendation: Remove {TEST_ID} or consolidate with {OTHER_TEST_ID}
+    - Recommendation: Remove {TEST_ID} or consolidate with {OTHER_TEST_ID}
 
 ---
 
@@ -436,12 +436,12 @@ Note: This workflow does not generate tests. If gaps exist, run `*atdd` or `*aut
 List unresolved P1/P2 issues that don't block release but should be tracked:
 
 1. **{Risk Description}**
-   - **Priority**: P1 | P2
-   - **Probability**: Low | Medium | High
-   - **Impact**: Low | Medium | High
-   - **Risk Score**: {probability × impact}
-   - **Mitigation**: {workaround or monitoring plan}
-   - **Remediation**: {fix in next milestone/release}
+    - **Priority**: P1 | P2
+    - **Probability**: Low | Medium | High
+    - **Impact**: Low | Medium | High
+    - **Risk Score**: {probability × impact}
+    - **Mitigation**: {workaround or monitoring plan}
+    - **Remediation**: {fix in next milestone/release}
 
 **Overall Residual Risk**: {LOW | MEDIUM | HIGH}
 
@@ -499,81 +499,81 @@ Top blockers requiring immediate attention:
 #### For PASS Decision ✅
 
 1. **Proceed to deployment**
-   - Deploy to staging environment
-   - Validate with smoke tests
-   - Monitor key metrics for 24-48 hours
-   - Deploy to production with standard monitoring
+    - Deploy to staging environment
+    - Validate with smoke tests
+    - Monitor key metrics for 24-48 hours
+    - Deploy to production with standard monitoring
 
 2. **Post-Deployment Monitoring**
-   - {metric_1_to_monitor}
-   - {metric_2_to_monitor}
-   - {alert_thresholds}
+    - {metric_1_to_monitor}
+    - {metric_2_to_monitor}
+    - {alert_thresholds}
 
 3. **Success Criteria**
-   - {success_criterion_1}
-   - {success_criterion_2}
+    - {success_criterion_1}
+    - {success_criterion_2}
 
 ---
 
 #### For CONCERNS Decision ⚠️
 
 1. **Deploy with Enhanced Monitoring**
-   - Deploy to staging with extended validation period
-   - Enable enhanced logging/monitoring for known risk areas:
-     - {risk_area_1}
-     - {risk_area_2}
-   - Set aggressive alerts for potential issues
-   - Deploy to production with caution
+    - Deploy to staging with extended validation period
+    - Enable enhanced logging/monitoring for known risk areas:
+        - {risk_area_1}
+        - {risk_area_2}
+    - Set aggressive alerts for potential issues
+    - Deploy to production with caution
 
 2. **Create Remediation Backlog**
-   - Create story: "{fix_title_1}" (Priority: {priority})
-   - Create story: "{fix_title_2}" (Priority: {priority})
-   - Target milestone: {next_milestone}
+    - Create story: "{fix_title_1}" (Priority: {priority})
+    - Create story: "{fix_title_2}" (Priority: {priority})
+    - Target milestone: {next_milestone}
 
 3. **Post-Deployment Actions**
-   - Monitor {specific_areas} closely for {time_period}
-   - Weekly status updates on remediation progress
-   - Re-assess after fixes deployed
+    - Monitor {specific_areas} closely for {time_period}
+    - Weekly status updates on remediation progress
+    - Re-assess after fixes deployed
 
 ---
 
 #### For FAIL Decision ❌
 
 1. **Block Deployment Immediately**
-   - Do NOT deploy to any environment
-   - Notify stakeholders of blocking issues
-   - Escalate to tech lead and PM
+    - Do NOT deploy to any environment
+    - Notify stakeholders of blocking issues
+    - Escalate to tech lead and PM
 
 2. **Fix Critical Issues**
-   - Address P0 blockers listed in Critical Issues section
-   - Owner assignments confirmed
-   - Due dates agreed upon
-   - Daily standup on blocker resolution
+    - Address P0 blockers listed in Critical Issues section
+    - Owner assignments confirmed
+    - Due dates agreed upon
+    - Daily standup on blocker resolution
 
 3. **Re-Run Gate After Fixes**
-   - Re-run full test suite after fixes
-   - Re-run `bmad tea *trace` workflow
-   - Verify decision is PASS before deploying
+    - Re-run full test suite after fixes
+    - Re-run `bmad tea *trace` workflow
+    - Verify decision is PASS before deploying
 
 ---
 
 #### For WAIVED Decision 🔓
 
 1. **Deploy with Business Approval**
-   - Confirm waiver approver has signed off
-   - Document waiver in release notes
-   - Notify all stakeholders of waived risks
+    - Confirm waiver approver has signed off
+    - Document waiver in release notes
+    - Notify all stakeholders of waived risks
 
 2. **Aggressive Monitoring**
-   - {enhanced_monitoring_plan}
-   - {escalation_procedures}
-   - Daily checks on waived risk areas
+    - {enhanced_monitoring_plan}
+    - {escalation_procedures}
+    - Daily checks on waived risk areas
 
 3. **Mandatory Remediation**
-   - Fix MUST be completed by {due_date}
-   - Issue CANNOT be waived in next release
-   - Track remediation progress weekly
-   - Verify fix in next gate
+    - Fix MUST be completed by {due_date}
+    - Issue CANNOT be waived in next release
+    - Track remediation progress weekly
+    - Verify fix in next gate
 
 ---
 

@@ -43,9 +43,9 @@ Verify the project is ready for framework scaffolding and gather key context.
 **Auto-Detection Algorithm** (when `test_stack_type` is `"auto"` or not configured):
 
 - Scan `{project-root}` for project manifests:
-  - **Frontend indicators**: `package.json` with react/vue/angular/next dependencies, `playwright.config.*`, `vite.config.*`, `webpack.config.*`
-  - **Backend indicators**: `pyproject.toml`, `pom.xml`/`build.gradle`, `go.mod`, `*.csproj`/`*.sln`, `Gemfile`, `Cargo.toml`
-  - **Both present** = `fullstack`; only frontend = `frontend`; only backend = `backend`
+    - **Frontend indicators**: `package.json` with react/vue/angular/next dependencies, `playwright.config.*`, `vite.config.*`, `webpack.config.*`
+    - **Backend indicators**: `pyproject.toml`, `pom.xml`/`build.gradle`, `go.mod`, `*.csproj`/`*.sln`, `Gemfile`, `Cargo.toml`
+    - **Both present** = `fullstack`; only frontend = `frontend`; only backend = `backend`
 - Explicit `test_stack_type` config value overrides auto-detection
 - **Backward compatibility**: if `test_stack_type` is not in config, treat as `"auto"` (preserves current frontend behavior for existing installs)
 
@@ -102,21 +102,21 @@ Summarize:
 
 - **If `{outputFile}` does not exist** (first save), create it with YAML frontmatter:
 
-  ```yaml
-  ---
-  stepsCompleted: ['step-01-preflight']
-  lastStep: 'step-01-preflight'
-  lastSaved: '{date}'
-  ---
-  ```
+    ```yaml
+    ---
+    stepsCompleted: ['step-01-preflight']
+    lastStep: 'step-01-preflight'
+    lastSaved: '{date}'
+    ---
+    ```
 
-  Then write this step's output below the frontmatter.
+    Then write this step's output below the frontmatter.
 
 - **If `{outputFile}` already exists**, update:
-  - Add `'step-01-preflight'` to `stepsCompleted` array (only if not already present)
-  - Set `lastStep: 'step-01-preflight'`
-  - Set `lastSaved: '{date}'`
-  - Append this step's output to the appropriate section of the document.
+    - Add `'step-01-preflight'` to `stepsCompleted` array (only if not already present)
+    - Set `lastStep: 'step-01-preflight'`
+    - Set `lastSaved: '{date}'`
+    - Append this step's output to the appropriate section of the document.
 
 Load next step: `{nextStepFile}`
 

@@ -139,11 +139,11 @@ inputDocuments: []
 {List specific improvements that would make the system more testable}
 
 1. **{Improvement name}**
-   - **Current problem**: {What's wrong}
-   - **Required change**: {What architecture must do}
-   - **Impact if not fixed**: {Consequences}
-   - **Owner**: {Team}
-   - **Timeline**: {Milestone}
+    - **Current problem**: {What's wrong}
+    - **Required change**: {What architecture must do}
+    - **Impact if not fixed**: {Consequences}
+    - **Owner**: {Team}
+    - **Timeline**: {Milestone}
 
 ---
 
@@ -209,8 +209,8 @@ For {Feature} Phase 1, the following trade-offs are acceptable:
 #### Risks to Plan
 
 - **Risk**: {Risk to the test plan itself}
-  - **Impact**: {How it affects testing}
-  - **Contingency**: {Backup plan}
+    - **Impact**: {How it affects testing}
+    - **Contingency**: {Backup plan}
 
 ---
 

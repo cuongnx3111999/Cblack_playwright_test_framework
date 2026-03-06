@@ -12,7 +12,7 @@ export default defineConfig({
     /* Tối ưu thời gian chạy, Playwright mặc định tự động Wait cho Elements */
     timeout: 30 * 1000,
     expect: {
-        timeout: 5000
+        timeout: 5000,
     },
     /* Chạy file test song song hay không? Chuẩn E2E này đề nghị disable để tránh đụng độ Data nếu cần */
     fullyParallel: false,
@@ -27,10 +27,13 @@ export default defineConfig({
     reporter: [
         ['html'],
         // Bật Monocart Reporter làm Reporter chính theo chuẩn
-        ['monocart-reporter', {
-            name: 'E2E Automation Report',
-            outputFile: './test-results/report.html'
-        }]
+        [
+            'monocart-reporter',
+            {
+                name: 'E2E Automation Report',
+                outputFile: './test-results/report.html',
+            },
+        ],
     ],
 
     /* Cấu hình dùng chung cho toàn bộ dự án */
@@ -56,7 +59,7 @@ export default defineConfig({
         // --- DỰ ÁN 1: HỆ THỐNG CRM ADMIN ---
         {
             name: 'CRM-Admin',
-            testDir: './tests/e2e/crm-admin',     // Chỉ chạy test trong thư mục này
+            testDir: './tests/e2e/crm-admin', // Chỉ chạy test trong thư mục này
             use: {
                 ...devices['Desktop Chrome'],
                 baseURL: process.env.CRM_BASE_URL || 'https://admin.example.com',
@@ -69,7 +72,7 @@ export default defineConfig({
         // --- DỰ ÁN 2: CỔNG THÔNG TIN KHÁCH HÀNG (PORTAL) ---
         {
             name: 'Portal-User',
-            testDir: './tests/e2e/portal-user',   // Chỉ chạy test trong thư mục này
+            testDir: './tests/e2e/portal-user', // Chỉ chạy test trong thư mục này
             use: {
                 ...devices['Desktop Chrome'],
                 baseURL: process.env.PORTAL_BASE_URL || 'https://portal.example.com',

@@ -51,7 +51,7 @@ console.log('✅ Phase 1 coverage matrix loaded');
 
 ```javascript
 if (coverageMatrix.phase !== 'PHASE_1_COMPLETE') {
-  throw new Error('Phase 1 not complete - cannot proceed to gate decision');
+    throw new Error('Phase 1 not complete - cannot proceed to gate decision');
 }
 ```
 
@@ -75,41 +75,41 @@ let rationale;
 
 // Rule 1: P0 coverage must be 100%
 if (p0Coverage < 100) {
-  gateDecision = 'FAIL';
-  rationale = `P0 coverage is ${p0Coverage}% (required: 100%). ${criticalGaps} critical requirements uncovered.`;
+    gateDecision = 'FAIL';
+    rationale = `P0 coverage is ${p0Coverage}% (required: 100%). ${criticalGaps} critical requirements uncovered.`;
 }
 // Rule 2: Overall coverage must be >= 80%
 else if (overallCoverage < 80) {
-  gateDecision = 'FAIL';
-  rationale = `Overall coverage is ${overallCoverage}% (minimum: 80%). Significant gaps exist.`;
+    gateDecision = 'FAIL';
+    rationale = `Overall coverage is ${overallCoverage}% (minimum: 80%). Significant gaps exist.`;
 }
 // Rule 3: P1 coverage < 80% → FAIL
 else if (effectiveP1Coverage < 80) {
-  gateDecision = 'FAIL';
-  rationale = hasP1Requirements
-    ? `P1 coverage is ${effectiveP1Coverage}% (minimum: 80%). High-priority gaps must be addressed.`
-    : `P1 requirements are not present; continuing with remaining gate criteria.`;
+    gateDecision = 'FAIL';
+    rationale = hasP1Requirements
+        ? `P1 coverage is ${effectiveP1Coverage}% (minimum: 80%). High-priority gaps must be addressed.`
+        : `P1 requirements are not present; continuing with remaining gate criteria.`;
 }
 // Rule 4: P1 coverage >= 90% and overall >= 80% with P0 at 100% → PASS
 else if (effectiveP1Coverage >= 90) {
-  gateDecision = 'PASS';
-  rationale = hasP1Requirements
-    ? `P0 coverage is 100%, P1 coverage is ${effectiveP1Coverage}% (target: 90%), and overall coverage is ${overallCoverage}% (minimum: 80%).`
-    : `P0 coverage is 100% and overall coverage is ${overallCoverage}% (minimum: 80%). No P1 requirements detected.`;
+    gateDecision = 'PASS';
+    rationale = hasP1Requirements
+        ? `P0 coverage is 100%, P1 coverage is ${effectiveP1Coverage}% (target: 90%), and overall coverage is ${overallCoverage}% (minimum: 80%).`
+        : `P0 coverage is 100% and overall coverage is ${overallCoverage}% (minimum: 80%). No P1 requirements detected.`;
 }
 // Rule 5: P1 coverage 80-89% with P0 at 100% and overall >= 80% → CONCERNS
 else if (effectiveP1Coverage >= 80) {
-  gateDecision = 'CONCERNS';
-  rationale = hasP1Requirements
-    ? `P0 coverage is 100% and overall coverage is ${overallCoverage}% (minimum: 80%), but P1 coverage is ${effectiveP1Coverage}% (target: 90%).`
-    : `P0 coverage is 100% and overall coverage is ${overallCoverage}% (minimum: 80%), but additional non-P1 gaps need mitigation.`;
+    gateDecision = 'CONCERNS';
+    rationale = hasP1Requirements
+        ? `P0 coverage is 100% and overall coverage is ${overallCoverage}% (minimum: 80%), but P1 coverage is ${effectiveP1Coverage}% (target: 90%).`
+        : `P0 coverage is 100% and overall coverage is ${overallCoverage}% (minimum: 80%), but additional non-P1 gaps need mitigation.`;
 }
 
 // Rule 6: Manual waiver option
 const manualWaiver = false; // Can be set via config or user input
 if (manualWaiver) {
-  gateDecision = 'WAIVED';
-  rationale += ' Manual waiver applied by stakeholder.';
+    gateDecision = 'WAIVED';
+    rationale += ' Manual waiver applied by stakeholder.';
 }
 ```
 
@@ -119,30 +119,33 @@ if (manualWaiver) {
 
 ```javascript
 const gateReport = {
-  decision: gateDecision,
-  rationale: rationale,
-  decision_date: new Date().toISOString(),
+    decision: gateDecision,
+    rationale: rationale,
+    decision_date: new Date().toISOString(),
 
-  coverage_matrix: coverageMatrix,
+    coverage_matrix: coverageMatrix,
 
-  gate_criteria: {
-    p0_coverage_required: '100%',
-    p0_coverage_actual: `${p0Coverage}%`,
-    p0_status: p0Coverage === 100 ? 'MET' : 'NOT MET',
+    gate_criteria: {
+        p0_coverage_required: '100%',
+        p0_coverage_actual: `${p0Coverage}%`,
+        p0_status: p0Coverage === 100 ? 'MET' : 'NOT MET',
 
-    p1_coverage_target_pass: '90%',
-    p1_coverage_minimum: '80%',
-    p1_coverage_actual: `${effectiveP1Coverage}%`,
-    p1_status: effectiveP1Coverage >= 90 ? 'MET' : effectiveP1Coverage >= 80 ? 'PARTIAL' : 'NOT MET',
+        p1_coverage_target_pass: '90%',
+        p1_coverage_minimum: '80%',
+        p1_coverage_actual: `${effectiveP1Coverage}%`,
+        p1_status:
+            effectiveP1Coverage >= 90 ? 'MET' : effectiveP1Coverage >= 80 ? 'PARTIAL' : 'NOT MET',
 
-    overall_coverage_minimum: '80%',
-    overall_coverage_actual: `${overallCoverage}%`,
-    overall_status: overallCoverage >= 80 ? 'MET' : 'NOT MET',
-  },
+        overall_coverage_minimum: '80%',
+        overall_coverage_actual: `${overallCoverage}%`,
+        overall_status: overallCoverage >= 80 ? 'MET' : 'NOT MET',
+    },
 
-  uncovered_requirements: coverageMatrix.gap_analysis.critical_gaps.concat(coverageMatrix.gap_analysis.high_gaps),
+    uncovered_requirements: coverageMatrix.gap_analysis.critical_gaps.concat(
+        coverageMatrix.gap_analysis.high_gaps,
+    ),
 
-  recommendations: coverageMatrix.recommendations,
+    recommendations: coverageMatrix.recommendations,
 };
 ```
 

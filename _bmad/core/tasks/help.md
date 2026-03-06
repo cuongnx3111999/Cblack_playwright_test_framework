@@ -18,16 +18,21 @@ description: 'Analyzes what is done and the users query and offers advice on wha
 ## DISPLAY RULES
 
 ### Command-Based Workflows
+
 When `command` field has a value:
+
 - Show the command prefixed with `/` (e.g., `/bmad-bmm-create-prd`)
 
 ### Agent-Based Workflows
+
 When `command` field is empty:
+
 - User loads agent first via `/agent-command`
 - Then invokes by referencing the `code` field or describing the `name` field
 - Do NOT show a slash command — show the code value and agent load instruction instead
 
 Example presentation for empty command:
+
 ```
 Explain Concept (EC)
 Load: /tech-writer, then ask to "EC about [topic]"
@@ -45,6 +50,7 @@ Detect the active module from conversation context, recent workflows, or user qu
 ## INPUT ANALYSIS
 
 Determine what was just completed:
+
 - Explicit completion stated by user
 - Workflow completed in current conversation
 - Artifacts found matching `outputs` patterns
@@ -64,23 +70,23 @@ Determine what was just completed:
 5. **Analyze input** — Task may provide a workflow name/code, conversational phrase, or nothing. Infer what was just completed using INPUT ANALYSIS above.
 
 6. **Present recommendations** — Show next steps based on:
-   - Completed workflows detected
-   - Phase/sequence ordering (ROUTING RULES)
-   - Artifact presence
+    - Completed workflows detected
+    - Phase/sequence ordering (ROUTING RULES)
+    - Artifact presence
 
-   **Optional items first** — List optional workflows until a required step is reached
-   **Required items next** — List the next required workflow
+    **Optional items first** — List optional workflows until a required step is reached
+    **Required items next** — List the next required workflow
 
-   For each item, apply DISPLAY RULES above and include:
-   - Workflow **name**
-   - **Command** OR **Code + Agent load instruction** (per DISPLAY RULES)
-   - **Agent** title and display name from the CSV (e.g., "🎨 Alex (Designer)")
-   - Brief **description**
+    For each item, apply DISPLAY RULES above and include:
+    - Workflow **name**
+    - **Command** OR **Code + Agent load instruction** (per DISPLAY RULES)
+    - **Agent** title and display name from the CSV (e.g., "🎨 Alex (Designer)")
+    - Brief **description**
 
 7. **Additional guidance to convey**:
-   - Present all output in `{communication_language}`
-   - Run each workflow in a **fresh context window**
-   - For **validation workflows**: recommend using a different high-quality LLM if available
-   - For conversational requests: match the user's tone while presenting clearly
+    - Present all output in `{communication_language}`
+    - Run each workflow in a **fresh context window**
+    - For **validation workflows**: recommend using a different high-quality LLM if available
+    - For conversational requests: match the user's tone while presenting clearly
 
 8. Return to the calling process after presenting recommendations.

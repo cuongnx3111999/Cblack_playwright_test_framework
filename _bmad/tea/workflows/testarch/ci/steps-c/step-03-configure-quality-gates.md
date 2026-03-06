@@ -60,15 +60,15 @@ When burn-in is extracted into a reusable workflow (`on: workflow_call`), all `$
   run: npm ci
 - name: Run burn-in loop
   env:
-    TEST_GREP: ${{ inputs.test-grep }}
-    BURN_IN_COUNT: ${{ inputs.burn-in-count }}
-    BASE_REF: ${{ inputs.base-ref }}
+      TEST_GREP: ${{ inputs.test-grep }}
+      BURN_IN_COUNT: ${{ inputs.burn-in-count }}
+      BASE_REF: ${{ inputs.base-ref }}
   run: |
-    # Security: inputs passed through env: to prevent script injection
-    for i in $(seq 1 "$BURN_IN_COUNT"); do
-      echo "Burn-in iteration $i/$BURN_IN_COUNT"
-      npx playwright test --grep "$TEST_GREP" || exit 1
-    done
+      # Security: inputs passed through env: to prevent script injection
+      for i in $(seq 1 "$BURN_IN_COUNT"); do
+        echo "Burn-in iteration $i/$BURN_IN_COUNT"
+        npx playwright test --grep "$TEST_GREP" || exit 1
+      done
 ```
 
 ---
@@ -105,21 +105,21 @@ Configure:
 
 - **If `{outputFile}` does not exist** (first save), create it with YAML frontmatter:
 
-  ```yaml
-  ---
-  stepsCompleted: ['step-03-configure-quality-gates']
-  lastStep: 'step-03-configure-quality-gates'
-  lastSaved: '{date}'
-  ---
-  ```
+    ```yaml
+    ---
+    stepsCompleted: ['step-03-configure-quality-gates']
+    lastStep: 'step-03-configure-quality-gates'
+    lastSaved: '{date}'
+    ---
+    ```
 
-  Then write this step's output below the frontmatter.
+    Then write this step's output below the frontmatter.
 
 - **If `{outputFile}` already exists**, update:
-  - Add `'step-03-configure-quality-gates'` to `stepsCompleted` array (only if not already present)
-  - Set `lastStep: 'step-03-configure-quality-gates'`
-  - Set `lastSaved: '{date}'`
-  - Append this step's output to the appropriate section of the document.
+    - Add `'step-03-configure-quality-gates'` to `stepsCompleted` array (only if not already present)
+    - Set `lastStep: 'step-03-configure-quality-gates'`
+    - Set `lastSaved: '{date}'`
+    - Append this step's output to the appropriate section of the document.
 
 Load next step: `{nextStepFile}`
 

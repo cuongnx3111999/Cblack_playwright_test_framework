@@ -14,17 +14,19 @@ export class LoginFlow {
     /**
      * Gom các hành động nhỏ gọn thành 1 Business Flow (Action Flow)
      */
-    async loginAsUser(user: { email: string; password: string }): Promise<{ welcomeTitle: Locator }> {
+    async loginAsUser(user: {
+        email: string;
+        password: string;
+    }): Promise<{ welcomeTitle: Locator }> {
         // Lưu ý: nên truyền URL từ file base.config hoặc env, ở đây hardcode tạm URL mẫu
         await this.page.goto('https://example.com/login');
 
         await this.loginPage.enterEmail(user.email);
         await this.loginPage.enterPassword(user.password);
         await this.loginPage.clickLogin();
-
         // Trả về Element (Locator) hoặc trạng thái để tầng Test (Auth.spec) thực hiện Assertion
         return {
-            welcomeTitle: this.loginPage.welcomeTitle
+            welcomeTitle: this.loginPage.welcomeTitle,
         };
     }
 }

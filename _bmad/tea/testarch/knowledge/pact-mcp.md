@@ -65,17 +65,17 @@ Add a `"smartbear"` entry to the `mcpServers` object in the config file for your
 
 ```json
 {
-  "mcpServers": {
-    "smartbear": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@smartbear/mcp@latest"],
-      "env": {
-        "PACT_BROKER_BASE_URL": "https://{tenant}.pactflow.io",
-        "PACT_BROKER_TOKEN": "<your-api-token>"
-      }
+    "mcpServers": {
+        "smartbear": {
+            "type": "stdio",
+            "command": "npx",
+            "args": ["-y", "@smartbear/mcp@latest"],
+            "env": {
+                "PACT_BROKER_BASE_URL": "https://{tenant}.pactflow.io",
+                "PACT_BROKER_TOKEN": "<your-api-token>"
+            }
+        }
     }
-  }
 }
 ```
 
@@ -101,17 +101,17 @@ Add to `.vscode/mcp.json` (note: uses `servers` key, not `mcpServers`):
 
 ```json
 {
-  "servers": {
-    "smartbear": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@smartbear/mcp@latest"],
-      "env": {
-        "PACT_BROKER_BASE_URL": "https://{tenant}.pactflow.io",
-        "PACT_BROKER_TOKEN": "${input:pactToken}"
-      }
+    "servers": {
+        "smartbear": {
+            "type": "stdio",
+            "command": "npx",
+            "args": ["-y", "@smartbear/mcp@latest"],
+            "env": {
+                "PACT_BROKER_BASE_URL": "https://{tenant}.pactflow.io",
+                "PACT_BROKER_TOKEN": "${input:pactToken}"
+            }
+        }
     }
-  }
 }
 ```
 

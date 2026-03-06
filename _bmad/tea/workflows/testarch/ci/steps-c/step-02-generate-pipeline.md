@@ -41,58 +41,68 @@ Create platform-specific CI configuration with test execution, sharding, burn-in
 
 ```javascript
 const orchestrationContext = {
-  config: {
-    execution_mode: config.tea_execution_mode || 'auto', // "auto" | "subagent" | "agent-team" | "sequential"
-    capability_probe: config.tea_capability_probe !== false, // true by default
-  },
-  timestamp: new Date().toISOString().replace(/[:.]/g, '-'),
+    config: {
+        execution_mode: config.tea_execution_mode || 'auto', // "auto" | "subagent" | "agent-team" | "sequential"
+        capability_probe: config.tea_capability_probe !== false, // true by default
+    },
+    timestamp: new Date().toISOString().replace(/[:.]/g, '-'),
 };
 
 const normalizeUserExecutionMode = (mode) => {
-  if (typeof mode !== 'string') return null;
-  const normalized = mode.trim().toLowerCase().replace(/[-_]/g, ' ').replace(/\s+/g, ' ');
+    if (typeof mode !== 'string') return null;
+    const normalized = mode.trim().toLowerCase().replace(/[-_]/g, ' ').replace(/\s+/g, ' ');
 
-  if (normalized === 'auto') return 'auto';
-  if (normalized === 'sequential') return 'sequential';
-  if (normalized === 'subagent' || normalized === 'sub agent' || normalized === 'subagents' || normalized === 'sub agents') {
-    return 'subagent';
-  }
-  if (normalized === 'agent team' || normalized === 'agent teams' || normalized === 'agentteam') {
-    return 'agent-team';
-  }
+    if (normalized === 'auto') return 'auto';
+    if (normalized === 'sequential') return 'sequential';
+    if (
+        normalized === 'subagent' ||
+        normalized === 'sub agent' ||
+        normalized === 'subagents' ||
+        normalized === 'sub agents'
+    ) {
+        return 'subagent';
+    }
+    if (normalized === 'agent team' || normalized === 'agent teams' || normalized === 'agentteam') {
+        return 'agent-team';
+    }
 
-  return null;
+    return null;
 };
 
 const normalizeConfigExecutionMode = (mode) => {
-  if (mode === 'subagent') return 'subagent';
-  if (mode === 'auto' || mode === 'sequential' || mode === 'subagent' || mode === 'agent-team') {
-    return mode;
-  }
-  return null;
+    if (mode === 'subagent') return 'subagent';
+    if (mode === 'auto' || mode === 'sequential' || mode === 'subagent' || mode === 'agent-team') {
+        return mode;
+    }
+    return null;
 };
 
 // Explicit user instruction in the active run takes priority over config.
-const explicitModeFromUser = normalizeUserExecutionMode(runtime.getExplicitExecutionModeHint?.() || null);
+const explicitModeFromUser = normalizeUserExecutionMode(
+    runtime.getExplicitExecutionModeHint?.() || null,
+);
 
-const requestedMode = explicitModeFromUser || normalizeConfigExecutionMode(orchestrationContext.config.execution_mode) || 'auto';
+const requestedMode =
+    explicitModeFromUser ||
+    normalizeConfigExecutionMode(orchestrationContext.config.execution_mode) ||
+    'auto';
 const probeEnabled = orchestrationContext.config.capability_probe;
 
 const supports = { subagent: false, agentTeam: false };
 if (probeEnabled) {
-  supports.subagent = runtime.canLaunchSubagents?.() === true;
-  supports.agentTeam = runtime.canLaunchAgentTeams?.() === true;
+    supports.subagent = runtime.canLaunchSubagents?.() === true;
+    supports.agentTeam = runtime.canLaunchAgentTeams?.() === true;
 }
 
 let resolvedMode = requestedMode;
 if (requestedMode === 'auto') {
-  if (supports.agentTeam) resolvedMode = 'agent-team';
-  else if (supports.subagent) resolvedMode = 'subagent';
-  else resolvedMode = 'sequential';
+    if (supports.agentTeam) resolvedMode = 'agent-team';
+    else if (supports.subagent) resolvedMode = 'subagent';
+    else resolvedMode = 'sequential';
 } else if (probeEnabled && requestedMode === 'agent-team' && !supports.agentTeam) {
-  resolvedMode = supports.subagent ? 'subagent' : 'sequential';
+    resolvedMode = supports.subagent ? 'subagent' : 'sequential';
 } else if (probeEnabled && requestedMode === 'subagent' && !supports.subagent) {
-  resolvedMode = 'sequential';
+    resolvedMode = 'sequential';
 }
 ```
 
@@ -134,20 +144,20 @@ When the generated pipeline is extended into reusable workflows (`on: workflow_c
 # ✅ SAFE — input is DATA interpolated into a fixed command
 - name: Run tests
   env:
-    TEST_GREP: ${{ inputs.test-grep }}
+      TEST_GREP: ${{ inputs.test-grep }}
   run: |
-    # Security: inputs passed through env: to prevent script injection
-    npx playwright test --grep "$TEST_GREP"
+      # Security: inputs passed through env: to prevent script injection
+      npx playwright test --grep "$TEST_GREP"
 
 # ❌ NEVER — direct GitHub expression injection
 - name: Run tests
   run: |
-    npx playwright test --grep "${{ inputs.test-grep }}"
+      npx playwright test --grep "${{ inputs.test-grep }}"
 
 # ❌ NEVER — executing input-derived env var as a command
 - name: Install
   env:
-    CMD: ${{ inputs.install-command }}
+      CMD: ${{ inputs.install-command }}
   run: $CMD
 ```
 
@@ -194,38 +204,38 @@ When `tea_use_pactjs_utils` is enabled, add a `contract-test` stage after `test`
 
 ```yaml
 env:
-  PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
-  PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
-  GITHUB_SHA: ${{ github.sha }} # auto-set by GitHub Actions
-  GITHUB_BRANCH: ${{ github.head_ref || github.ref_name }} # NOT auto-set — must be defined explicitly
+    PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+    PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+    GITHUB_SHA: ${{ github.sha }} # auto-set by GitHub Actions
+    GITHUB_BRANCH: ${{ github.head_ref || github.ref_name }} # NOT auto-set — must be defined explicitly
 ```
 
 > **Note:** `GITHUB_SHA` is auto-set by GitHub Actions, but `GITHUB_BRANCH` is **not** — it must be derived from `github.head_ref` (for PRs) or `github.ref_name` (for pushes). The pactjs-utils library reads both from `process.env`.
 
 1. **Consumer test + publish**: Run consumer contract tests, then publish pacts to broker
-   - `npm run test:contract:consumer`
-   - `npx pact-broker publish ./pacts --consumer-app-version=$GITHUB_SHA --branch=$GITHUB_BRANCH`
-   - Only publish on PR and main branch pushes
+    - `npm run test:contract:consumer`
+    - `npx pact-broker publish ./pacts --consumer-app-version=$GITHUB_SHA --branch=$GITHUB_BRANCH`
+    - Only publish on PR and main branch pushes
 
 2. **Provider verification**: Run provider verification against published pacts
-   - `npm run test:contract:provider`
-   - `buildVerifierOptions` auto-reads `PACT_BROKER_BASE_URL`, `PACT_BROKER_TOKEN`, `GITHUB_SHA`, `GITHUB_BRANCH`
-   - Verification results published to broker when `CI=true`
+    - `npm run test:contract:provider`
+    - `buildVerifierOptions` auto-reads `PACT_BROKER_BASE_URL`, `PACT_BROKER_TOKEN`, `GITHUB_SHA`, `GITHUB_BRANCH`
+    - Verification results published to broker when `CI=true`
 
 3. **Can-I-Deploy gate**: Block deployment if contracts are incompatible
-   - `npx pact-broker can-i-deploy --pacticipant=<ServiceName> --version=$GITHUB_SHA --to-environment=production`
-   - Add `--retry-while-unknown 6 --retry-interval 10` for async verification
+    - `npx pact-broker can-i-deploy --pacticipant=<ServiceName> --version=$GITHUB_SHA --to-environment=production`
+    - Add `--retry-while-unknown 6 --retry-interval 10` for async verification
 
 4. **Webhook job**: Add `repository_dispatch` trigger for `pact_changed` event
-   - Provider verification runs when consumers publish new pacts
-   - Ensures compatibility is checked on both consumer and provider changes
+    - Provider verification runs when consumers publish new pacts
+    - Ensures compatibility is checked on both consumer and provider changes
 
 5. **Breaking change handling**: When `PACT_BREAKING_CHANGE=true` env var is set:
-   - Provider test passes `includeMainAndDeployed: false` to `buildVerifierOptions` — verifies only matching branch
-   - Coordinate with consumer team before removing the flag
+    - Provider test passes `includeMainAndDeployed: false` to `buildVerifierOptions` — verifies only matching branch
+    - Coordinate with consumer team before removing the flag
 
 6. **Record deployment**: After successful deployment, record version in broker
-   - `npx pact-broker record-deployment --pacticipant=<ServiceName> --version=$GITHUB_SHA --environment=production`
+    - `npx pact-broker record-deployment --pacticipant=<ServiceName> --version=$GITHUB_SHA --environment=production`
 
 Required CI secrets: `PACT_BROKER_BASE_URL`, `PACT_BROKER_TOKEN`
 
@@ -239,21 +249,21 @@ Required CI secrets: `PACT_BROKER_BASE_URL`, `PACT_BROKER_TOKEN`
 
 - **If `{outputFile}` does not exist** (first save), create it with YAML frontmatter:
 
-  ```yaml
-  ---
-  stepsCompleted: ['step-02-generate-pipeline']
-  lastStep: 'step-02-generate-pipeline'
-  lastSaved: '{date}'
-  ---
-  ```
+    ```yaml
+    ---
+    stepsCompleted: ['step-02-generate-pipeline']
+    lastStep: 'step-02-generate-pipeline'
+    lastSaved: '{date}'
+    ---
+    ```
 
-  Then write this step's output below the frontmatter.
+    Then write this step's output below the frontmatter.
 
 - **If `{outputFile}` already exists**, update:
-  - Add `'step-02-generate-pipeline'` to `stepsCompleted` array (only if not already present)
-  - Set `lastStep: 'step-02-generate-pipeline'`
-  - Set `lastSaved: '{date}'`
-  - Append this step's output to the appropriate section of the document.
+    - Add `'step-02-generate-pipeline'` to `stepsCompleted` array (only if not already present)
+    - Set `lastStep: 'step-02-generate-pipeline'`
+    - Set `lastSaved: '{date}'`
+    - Append this step's output to the appropriate section of the document.
 
 ### 5. Orchestration Notes for This Step
 

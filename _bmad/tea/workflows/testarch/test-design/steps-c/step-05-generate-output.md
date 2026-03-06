@@ -42,58 +42,68 @@ Write the final test-design document(s) using the correct template(s), then vali
 
 ```javascript
 const orchestrationContext = {
-  config: {
-    execution_mode: config.tea_execution_mode || 'auto', // "auto" | "subagent" | "agent-team" | "sequential"
-    capability_probe: config.tea_capability_probe !== false, // true by default
-  },
-  timestamp: new Date().toISOString().replace(/[:.]/g, '-'),
+    config: {
+        execution_mode: config.tea_execution_mode || 'auto', // "auto" | "subagent" | "agent-team" | "sequential"
+        capability_probe: config.tea_capability_probe !== false, // true by default
+    },
+    timestamp: new Date().toISOString().replace(/[:.]/g, '-'),
 };
 
 const normalizeUserExecutionMode = (mode) => {
-  if (typeof mode !== 'string') return null;
-  const normalized = mode.trim().toLowerCase().replace(/[-_]/g, ' ').replace(/\s+/g, ' ');
+    if (typeof mode !== 'string') return null;
+    const normalized = mode.trim().toLowerCase().replace(/[-_]/g, ' ').replace(/\s+/g, ' ');
 
-  if (normalized === 'auto') return 'auto';
-  if (normalized === 'sequential') return 'sequential';
-  if (normalized === 'subagent' || normalized === 'sub agent' || normalized === 'subagents' || normalized === 'sub agents') {
-    return 'subagent';
-  }
-  if (normalized === 'agent team' || normalized === 'agent teams' || normalized === 'agentteam') {
-    return 'agent-team';
-  }
+    if (normalized === 'auto') return 'auto';
+    if (normalized === 'sequential') return 'sequential';
+    if (
+        normalized === 'subagent' ||
+        normalized === 'sub agent' ||
+        normalized === 'subagents' ||
+        normalized === 'sub agents'
+    ) {
+        return 'subagent';
+    }
+    if (normalized === 'agent team' || normalized === 'agent teams' || normalized === 'agentteam') {
+        return 'agent-team';
+    }
 
-  return null;
+    return null;
 };
 
 const normalizeConfigExecutionMode = (mode) => {
-  if (mode === 'subagent') return 'subagent';
-  if (mode === 'auto' || mode === 'sequential' || mode === 'subagent' || mode === 'agent-team') {
-    return mode;
-  }
-  return null;
+    if (mode === 'subagent') return 'subagent';
+    if (mode === 'auto' || mode === 'sequential' || mode === 'subagent' || mode === 'agent-team') {
+        return mode;
+    }
+    return null;
 };
 
 // Explicit user instruction in the active run takes priority over config.
-const explicitModeFromUser = normalizeUserExecutionMode(runtime.getExplicitExecutionModeHint?.() || null);
+const explicitModeFromUser = normalizeUserExecutionMode(
+    runtime.getExplicitExecutionModeHint?.() || null,
+);
 
-const requestedMode = explicitModeFromUser || normalizeConfigExecutionMode(orchestrationContext.config.execution_mode) || 'auto';
+const requestedMode =
+    explicitModeFromUser ||
+    normalizeConfigExecutionMode(orchestrationContext.config.execution_mode) ||
+    'auto';
 const probeEnabled = orchestrationContext.config.capability_probe;
 
 const supports = { subagent: false, agentTeam: false };
 if (probeEnabled) {
-  supports.subagent = runtime.canLaunchSubagents?.() === true;
-  supports.agentTeam = runtime.canLaunchAgentTeams?.() === true;
+    supports.subagent = runtime.canLaunchSubagents?.() === true;
+    supports.agentTeam = runtime.canLaunchAgentTeams?.() === true;
 }
 
 let resolvedMode = requestedMode;
 if (requestedMode === 'auto') {
-  if (supports.agentTeam) resolvedMode = 'agent-team';
-  else if (supports.subagent) resolvedMode = 'subagent';
-  else resolvedMode = 'sequential';
+    if (supports.agentTeam) resolvedMode = 'agent-team';
+    else if (supports.subagent) resolvedMode = 'subagent';
+    else resolvedMode = 'sequential';
 } else if (probeEnabled && requestedMode === 'agent-team' && !supports.agentTeam) {
-  resolvedMode = supports.subagent ? 'subagent' : 'sequential';
+    resolvedMode = supports.subagent ? 'subagent' : 'sequential';
 } else if (probeEnabled && requestedMode === 'subagent' && !supports.subagent) {
-  resolvedMode = 'sequential';
+    resolvedMode = 'sequential';
 }
 ```
 
@@ -156,10 +166,10 @@ If any checklist criteria are missing, fix before completion.
 
 1. Copy `test-design-handoff-template.md` to `{test_artifacts}/test-design/{project_name}-handoff.md`
 2. Populate all sections from the test design output:
-   - Fill TEA Artifacts Inventory with actual paths
-   - Extract P0/P1 risks into Epic-Level guidance
-   - Map critical test scenarios to Story-Level guidance
-   - Build risk-to-story mapping table from risk register
+    - Fill TEA Artifacts Inventory with actual paths
+    - Extract P0/P1 risks into Epic-Level guidance
+    - Map critical test scenarios to Story-Level guidance
+    - Build risk-to-story mapping table from risk register
 3. Save alongside the test design document
 
 > **Note**: The handoff document is designed for consumption by BMAD's `create-epics-and-stories` workflow. It is only generated for system-level test designs where epic/story decomposition is relevant.
@@ -194,21 +204,21 @@ Summarize:
 
 - **If `{progressFile}` does not exist** (first save), create it with YAML frontmatter:
 
-  ```yaml
-  ---
-  stepsCompleted: ['step-05-generate-output']
-  lastStep: 'step-05-generate-output'
-  lastSaved: '{date}'
-  ---
-  ```
+    ```yaml
+    ---
+    stepsCompleted: ['step-05-generate-output']
+    lastStep: 'step-05-generate-output'
+    lastSaved: '{date}'
+    ---
+    ```
 
-  Then write this step's output below the frontmatter.
+    Then write this step's output below the frontmatter.
 
 - **If `{progressFile}` already exists**, update:
-  - Add `'step-05-generate-output'` to `stepsCompleted` array (only if not already present)
-  - Set `lastStep: 'step-05-generate-output'`
-  - Set `lastSaved: '{date}'`
-  - Append this step's output to the appropriate section of the document.
+    - Add `'step-05-generate-output'` to `stepsCompleted` array (only if not already present)
+    - Set `lastStep: 'step-05-generate-output'`
+    - Set `lastSaved: '{date}'`
+    - Append this step's output to the appropriate section of the document.
 
 ## 🚨 SYSTEM SUCCESS/FAILURE METRICS:
 

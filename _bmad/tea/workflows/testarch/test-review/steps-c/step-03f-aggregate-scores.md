@@ -40,14 +40,14 @@ Read outputs from 4 quality subagents, calculate weighted overall score (0-100),
 // Use the SAME timestamp generated in Step 3 (do not regenerate).
 const timestamp = subagentContext?.timestamp;
 if (!timestamp) {
-  throw new Error('Missing timestamp from Step 3 context. Pass Step 3 timestamp into Step 3F.');
+    throw new Error('Missing timestamp from Step 3 context. Pass Step 3 timestamp into Step 3F.');
 }
 const dimensions = ['determinism', 'isolation', 'maintainability', 'performance'];
 const results = {};
 
 dimensions.forEach((dim) => {
-  const outputPath = `/tmp/tea-test-review-${dim}-${timestamp}.json`;
-  results[dim] = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
+    const outputPath = `/tmp/tea-test-review-${dim}-${timestamp}.json`;
+    results[dim] = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
 });
 ```
 
@@ -56,7 +56,7 @@ dimensions.forEach((dim) => {
 ```javascript
 const allSucceeded = dimensions.every((dim) => results[dim].score !== undefined);
 if (!allSucceeded) {
-  throw new Error('One or more quality subagents failed!');
+    throw new Error('One or more quality subagents failed!');
 }
 ```
 
@@ -68,10 +68,10 @@ if (!allSucceeded) {
 
 ```javascript
 const weights = {
-  determinism: 0.3, // 30% - Reliability and flake prevention
-  isolation: 0.3, // 30% - Parallel safety and independence
-  maintainability: 0.25, // 25% - Readability and long-term health
-  performance: 0.15, // 15% - Speed and execution efficiency
+    determinism: 0.3, // 30% - Reliability and flake prevention
+    isolation: 0.3, // 30% - Parallel safety and independence
+    maintainability: 0.25, // 25% - Readability and long-term health
+    performance: 0.15, // 15% - Speed and execution efficiency
 };
 ```
 
@@ -79,7 +79,7 @@ const weights = {
 
 ```javascript
 const overallScore = dimensions.reduce((sum, dim) => {
-  return sum + results[dim].score * weights[dim];
+    return sum + results[dim].score * weights[dim];
 }, 0);
 
 const roundedScore = Math.round(overallScore);
@@ -89,11 +89,11 @@ const roundedScore = Math.round(overallScore);
 
 ```javascript
 const getGrade = (score) => {
-  if (score >= 90) return 'A';
-  if (score >= 80) return 'B';
-  if (score >= 70) return 'C';
-  if (score >= 60) return 'D';
-  return 'F';
+    if (score >= 90) return 'A';
+    if (score >= 80) return 'B';
+    if (score >= 70) return 'C';
+    if (score >= 60) return 'D';
+    return 'F';
 };
 
 const overallGrade = getGrade(roundedScore);
@@ -107,10 +107,10 @@ const overallGrade = getGrade(roundedScore);
 
 ```javascript
 const allViolations = dimensions.flatMap((dim) =>
-  results[dim].violations.map((v) => ({
-    ...v,
-    dimension: dim,
-  })),
+    results[dim].violations.map((v) => ({
+        ...v,
+        dimension: dim,
+    })),
 );
 
 // Group by severity
@@ -119,10 +119,10 @@ const mediumSeverity = allViolations.filter((v) => v.severity === 'MEDIUM');
 const lowSeverity = allViolations.filter((v) => v.severity === 'LOW');
 
 const violationSummary = {
-  total: allViolations.length,
-  HIGH: highSeverity.length,
-  MEDIUM: mediumSeverity.length,
-  LOW: lowSeverity.length,
+    total: allViolations.length,
+    HIGH: highSeverity.length,
+    MEDIUM: mediumSeverity.length,
+    LOW: lowSeverity.length,
 };
 ```
 
@@ -134,15 +134,17 @@ const violationSummary = {
 
 ```javascript
 const allRecommendations = dimensions.flatMap((dim) =>
-  results[dim].recommendations.map((rec) => ({
-    dimension: dim,
-    recommendation: rec,
-    impact: results[dim].score < 70 ? 'HIGH' : 'MEDIUM',
-  })),
+    results[dim].recommendations.map((rec) => ({
+        dimension: dim,
+        recommendation: rec,
+        impact: results[dim].score < 70 ? 'HIGH' : 'MEDIUM',
+    })),
 );
 
 // Sort by impact (HIGH first)
-const prioritizedRecommendations = allRecommendations.sort((a, b) => (a.impact === 'HIGH' ? -1 : 1)).slice(0, 10); // Top 10 recommendations
+const prioritizedRecommendations = allRecommendations
+    .sort((a, b) => (a.impact === 'HIGH' ? -1 : 1))
+    .slice(0, 10); // Top 10 recommendations
 ```
 
 ---
@@ -153,38 +155,42 @@ const prioritizedRecommendations = allRecommendations.sort((a, b) => (a.impact =
 
 ```javascript
 const reviewSummary = {
-  overall_score: roundedScore,
-  overall_grade: overallGrade,
-  quality_assessment: getQualityAssessment(roundedScore),
+    overall_score: roundedScore,
+    overall_grade: overallGrade,
+    quality_assessment: getQualityAssessment(roundedScore),
 
-  dimension_scores: {
-    determinism: results.determinism.score,
-    isolation: results.isolation.score,
-    maintainability: results.maintainability.score,
-    performance: results.performance.score,
-  },
+    dimension_scores: {
+        determinism: results.determinism.score,
+        isolation: results.isolation.score,
+        maintainability: results.maintainability.score,
+        performance: results.performance.score,
+    },
 
-  dimension_grades: {
-    determinism: results.determinism.grade,
-    isolation: results.isolation.grade,
-    maintainability: results.maintainability.grade,
-    performance: results.performance.grade,
-  },
+    dimension_grades: {
+        determinism: results.determinism.grade,
+        isolation: results.isolation.grade,
+        maintainability: results.maintainability.grade,
+        performance: results.performance.grade,
+    },
 
-  violations_summary: violationSummary,
+    violations_summary: violationSummary,
 
-  all_violations: allViolations,
+    all_violations: allViolations,
 
-  high_severity_violations: highSeverity,
+    high_severity_violations: highSeverity,
 
-  top_10_recommendations: prioritizedRecommendations,
+    top_10_recommendations: prioritizedRecommendations,
 
-  subagent_execution: 'PARALLEL (4 quality dimensions)',
-  performance_gain: '~60% faster than sequential',
+    subagent_execution: 'PARALLEL (4 quality dimensions)',
+    performance_gain: '~60% faster than sequential',
 };
 
 // Save for Step 4 (report generation)
-fs.writeFileSync(`/tmp/tea-test-review-summary-${timestamp}.json`, JSON.stringify(reviewSummary, null, 2), 'utf8');
+fs.writeFileSync(
+    `/tmp/tea-test-review-summary-${timestamp}.json`,
+    JSON.stringify(reviewSummary, null, 2),
+    'utf8',
+);
 ```
 
 ---
@@ -225,21 +231,21 @@ fs.writeFileSync(`/tmp/tea-test-review-summary-${timestamp}.json`, JSON.stringif
 
 - **If `{outputFile}` does not exist** (first save), create it using the workflow template (if available) with YAML frontmatter:
 
-  ```yaml
-  ---
-  stepsCompleted: ['step-03f-aggregate-scores']
-  lastStep: 'step-03f-aggregate-scores'
-  lastSaved: '{date}'
-  ---
-  ```
+    ```yaml
+    ---
+    stepsCompleted: ['step-03f-aggregate-scores']
+    lastStep: 'step-03f-aggregate-scores'
+    lastSaved: '{date}'
+    ---
+    ```
 
-  Then write this step's output below the frontmatter.
+    Then write this step's output below the frontmatter.
 
 - **If `{outputFile}` already exists**, update:
-  - Add `'step-03f-aggregate-scores'` to `stepsCompleted` array (only if not already present)
-  - Set `lastStep: 'step-03f-aggregate-scores'`
-  - Set `lastSaved: '{date}'`
-  - Append this step's output to the appropriate section of the document.
+    - Add `'step-03f-aggregate-scores'` to `stepsCompleted` array (only if not already present)
+    - Set `lastStep: 'step-03f-aggregate-scores'`
+    - Set `lastSaved: '{date}'`
+    - Append this step's output to the appropriate section of the document.
 
 ---
 

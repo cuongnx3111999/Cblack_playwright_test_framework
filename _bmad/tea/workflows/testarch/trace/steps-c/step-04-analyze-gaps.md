@@ -45,68 +45,78 @@ tempOutputFile: '/tmp/tea-trace-coverage-matrix-{{timestamp}}.json'
 
 ```javascript
 const parseBooleanFlag = (value, defaultValue = true) => {
-  if (typeof value === 'string') {
-    const normalized = value.trim().toLowerCase();
-    if (['false', '0', 'off', 'no'].includes(normalized)) return false;
-    if (['true', '1', 'on', 'yes'].includes(normalized)) return true;
-  }
-  if (value === undefined || value === null) return defaultValue;
-  return Boolean(value);
+    if (typeof value === 'string') {
+        const normalized = value.trim().toLowerCase();
+        if (['false', '0', 'off', 'no'].includes(normalized)) return false;
+        if (['true', '1', 'on', 'yes'].includes(normalized)) return true;
+    }
+    if (value === undefined || value === null) return defaultValue;
+    return Boolean(value);
 };
 
 const orchestrationContext = {
-  config: {
-    execution_mode: config.tea_execution_mode || 'auto', // "auto" | "subagent" | "agent-team" | "sequential"
-    capability_probe: parseBooleanFlag(config.tea_capability_probe, true), // supports booleans and "false"/"true" strings
-  },
-  timestamp: new Date().toISOString().replace(/[:.]/g, '-'),
+    config: {
+        execution_mode: config.tea_execution_mode || 'auto', // "auto" | "subagent" | "agent-team" | "sequential"
+        capability_probe: parseBooleanFlag(config.tea_capability_probe, true), // supports booleans and "false"/"true" strings
+    },
+    timestamp: new Date().toISOString().replace(/[:.]/g, '-'),
 };
 
 const normalizeUserExecutionMode = (mode) => {
-  if (typeof mode !== 'string') return null;
-  const normalized = mode.trim().toLowerCase().replace(/[-_]/g, ' ').replace(/\s+/g, ' ');
+    if (typeof mode !== 'string') return null;
+    const normalized = mode.trim().toLowerCase().replace(/[-_]/g, ' ').replace(/\s+/g, ' ');
 
-  if (normalized === 'auto') return 'auto';
-  if (normalized === 'sequential') return 'sequential';
-  if (normalized === 'subagent' || normalized === 'sub agent' || normalized === 'subagents' || normalized === 'sub agents') {
-    return 'subagent';
-  }
-  if (normalized === 'agent team' || normalized === 'agent teams' || normalized === 'agentteam') {
-    return 'agent-team';
-  }
+    if (normalized === 'auto') return 'auto';
+    if (normalized === 'sequential') return 'sequential';
+    if (
+        normalized === 'subagent' ||
+        normalized === 'sub agent' ||
+        normalized === 'subagents' ||
+        normalized === 'sub agents'
+    ) {
+        return 'subagent';
+    }
+    if (normalized === 'agent team' || normalized === 'agent teams' || normalized === 'agentteam') {
+        return 'agent-team';
+    }
 
-  return null;
+    return null;
 };
 
 const normalizeConfigExecutionMode = (mode) => {
-  if (mode === 'subagent') return 'subagent';
-  if (mode === 'auto' || mode === 'sequential' || mode === 'subagent' || mode === 'agent-team') {
-    return mode;
-  }
-  return null;
+    if (mode === 'subagent') return 'subagent';
+    if (mode === 'auto' || mode === 'sequential' || mode === 'subagent' || mode === 'agent-team') {
+        return mode;
+    }
+    return null;
 };
 
 // Explicit user instruction in the active run takes priority over config.
-const explicitModeFromUser = normalizeUserExecutionMode(runtime.getExplicitExecutionModeHint?.() || null);
+const explicitModeFromUser = normalizeUserExecutionMode(
+    runtime.getExplicitExecutionModeHint?.() || null,
+);
 
-const requestedMode = explicitModeFromUser || normalizeConfigExecutionMode(orchestrationContext.config.execution_mode) || 'auto';
+const requestedMode =
+    explicitModeFromUser ||
+    normalizeConfigExecutionMode(orchestrationContext.config.execution_mode) ||
+    'auto';
 const probeEnabled = orchestrationContext.config.capability_probe;
 
 const supports = { subagent: false, agentTeam: false };
 if (probeEnabled) {
-  supports.subagent = runtime.canLaunchSubagents?.() === true;
-  supports.agentTeam = runtime.canLaunchAgentTeams?.() === true;
+    supports.subagent = runtime.canLaunchSubagents?.() === true;
+    supports.agentTeam = runtime.canLaunchAgentTeams?.() === true;
 }
 
 let resolvedMode = requestedMode;
 if (requestedMode === 'auto') {
-  if (supports.agentTeam) resolvedMode = 'agent-team';
-  else if (supports.subagent) resolvedMode = 'subagent';
-  else resolvedMode = 'sequential';
+    if (supports.agentTeam) resolvedMode = 'agent-team';
+    else if (supports.subagent) resolvedMode = 'subagent';
+    else resolvedMode = 'sequential';
 } else if (probeEnabled && requestedMode === 'agent-team' && !supports.agentTeam) {
-  resolvedMode = supports.subagent ? 'subagent' : 'sequential';
+    resolvedMode = supports.subagent ? 'subagent' : 'sequential';
 } else if (probeEnabled && requestedMode === 'subagent' && !supports.subagent) {
-  resolvedMode = 'sequential';
+    resolvedMode = 'sequential';
 }
 ```
 
@@ -147,9 +157,9 @@ const authCoverageGaps = coverageHeuristics?.auth_missing_negative_paths || [];
 const errorPathGaps = coverageHeuristics?.criteria_happy_path_only || [];
 
 const heuristicGapCounts = {
-  endpoints_without_tests: endpointCoverageGaps.length,
-  auth_missing_negative_paths: authCoverageGaps.length,
-  happy_path_only_criteria: errorPathGaps.length,
+    endpoints_without_tests: endpointCoverageGaps.length,
+    auth_missing_negative_paths: authCoverageGaps.length,
+    happy_path_only_criteria: errorPathGaps.length,
 };
 ```
 
@@ -166,60 +176,60 @@ const recommendations = [];
 
 // Critical gaps (P0)
 if (criticalGaps.length > 0) {
-  recommendations.push({
-    priority: 'URGENT',
-    action: `Run /bmad:tea:atdd for ${criticalGaps.length} P0 requirements`,
-    requirements: criticalGaps.map((r) => r.id),
-  });
+    recommendations.push({
+        priority: 'URGENT',
+        action: `Run /bmad:tea:atdd for ${criticalGaps.length} P0 requirements`,
+        requirements: criticalGaps.map((r) => r.id),
+    });
 }
 
 // High priority gaps (P1)
 if (highGaps.length > 0) {
-  recommendations.push({
-    priority: 'HIGH',
-    action: `Run /bmad:tea:automate to expand coverage for ${highGaps.length} P1 requirements`,
-    requirements: highGaps.map((r) => r.id),
-  });
+    recommendations.push({
+        priority: 'HIGH',
+        action: `Run /bmad:tea:automate to expand coverage for ${highGaps.length} P1 requirements`,
+        requirements: highGaps.map((r) => r.id),
+    });
 }
 
 // Partial coverage
 if (partialCoverage.length > 0) {
-  recommendations.push({
-    priority: 'MEDIUM',
-    action: `Complete coverage for ${partialCoverage.length} partially covered requirements`,
-    requirements: partialCoverage.map((r) => r.id),
-  });
+    recommendations.push({
+        priority: 'MEDIUM',
+        action: `Complete coverage for ${partialCoverage.length} partially covered requirements`,
+        requirements: partialCoverage.map((r) => r.id),
+    });
 }
 
 if (endpointCoverageGaps.length > 0) {
-  recommendations.push({
-    priority: 'HIGH',
-    action: `Add API tests for ${endpointCoverageGaps.length} uncovered endpoint(s)`,
-    requirements: endpointCoverageGaps.map((r) => r.id || r.endpoint || 'unknown'),
-  });
+    recommendations.push({
+        priority: 'HIGH',
+        action: `Add API tests for ${endpointCoverageGaps.length} uncovered endpoint(s)`,
+        requirements: endpointCoverageGaps.map((r) => r.id || r.endpoint || 'unknown'),
+    });
 }
 
 if (authCoverageGaps.length > 0) {
-  recommendations.push({
-    priority: 'HIGH',
-    action: `Add negative-path auth/authz tests for ${authCoverageGaps.length} requirement(s)`,
-    requirements: authCoverageGaps.map((r) => r.id || 'unknown'),
-  });
+    recommendations.push({
+        priority: 'HIGH',
+        action: `Add negative-path auth/authz tests for ${authCoverageGaps.length} requirement(s)`,
+        requirements: authCoverageGaps.map((r) => r.id || 'unknown'),
+    });
 }
 
 if (errorPathGaps.length > 0) {
-  recommendations.push({
-    priority: 'MEDIUM',
-    action: `Add error/edge scenario tests for ${errorPathGaps.length} happy-path-only criterion/criteria`,
-    requirements: errorPathGaps.map((r) => r.id || 'unknown'),
-  });
+    recommendations.push({
+        priority: 'MEDIUM',
+        action: `Add error/edge scenario tests for ${errorPathGaps.length} happy-path-only criterion/criteria`,
+        requirements: errorPathGaps.map((r) => r.id || 'unknown'),
+    });
 }
 
 // Quality issues
 recommendations.push({
-  priority: 'LOW',
-  action: 'Run /bmad:tea:test-review to assess test quality',
-  requirements: [],
+    priority: 'LOW',
+    action: 'Run /bmad:tea:test-review to assess test quality',
+    requirements: [],
 });
 ```
 
@@ -229,7 +239,9 @@ recommendations.push({
 
 ```javascript
 const totalRequirements = traceabilityMatrix.length;
-const coveredRequirements = traceabilityMatrix.filter((r) => r.coverage === 'FULL' || r.coverage === 'PARTIAL').length;
+const coveredRequirements = traceabilityMatrix.filter(
+    (r) => r.coverage === 'FULL' || r.coverage === 'PARTIAL',
+).length;
 const fullyCovered = traceabilityMatrix.filter((r) => r.coverage === 'FULL').length;
 
 const safePct = (covered, total) => (total > 0 ? Math.round((covered / total) * 100) : 100);
@@ -237,13 +249,21 @@ const coveragePercentage = safePct(fullyCovered, totalRequirements);
 
 // Priority-specific coverage
 const p0Total = traceabilityMatrix.filter((r) => r.priority === 'P0').length;
-const p0Covered = traceabilityMatrix.filter((r) => r.priority === 'P0' && r.coverage === 'FULL').length;
+const p0Covered = traceabilityMatrix.filter(
+    (r) => r.priority === 'P0' && r.coverage === 'FULL',
+).length;
 const p1Total = traceabilityMatrix.filter((r) => r.priority === 'P1').length;
-const p1Covered = traceabilityMatrix.filter((r) => r.priority === 'P1' && r.coverage === 'FULL').length;
+const p1Covered = traceabilityMatrix.filter(
+    (r) => r.priority === 'P1' && r.coverage === 'FULL',
+).length;
 const p2Total = traceabilityMatrix.filter((r) => r.priority === 'P2').length;
-const p2Covered = traceabilityMatrix.filter((r) => r.priority === 'P2' && r.coverage === 'FULL').length;
+const p2Covered = traceabilityMatrix.filter(
+    (r) => r.priority === 'P2' && r.coverage === 'FULL',
+).length;
 const p3Total = traceabilityMatrix.filter((r) => r.priority === 'P3').length;
-const p3Covered = traceabilityMatrix.filter((r) => r.priority === 'P3' && r.coverage === 'FULL').length;
+const p3Covered = traceabilityMatrix.filter(
+    (r) => r.priority === 'P3' && r.coverage === 'FULL',
+).length;
 
 const p0CoveragePercentage = safePct(p0Covered, p0Total);
 const p1CoveragePercentage = safePct(p1Covered, p1Total);
@@ -259,43 +279,43 @@ const p3CoveragePercentage = safePct(p3Covered, p3Total);
 
 ```javascript
 const coverageMatrix = {
-  phase: 'PHASE_1_COMPLETE',
-  generated_at: new Date().toISOString(),
+    phase: 'PHASE_1_COMPLETE',
+    generated_at: new Date().toISOString(),
 
-  requirements: traceabilityMatrix, // Full matrix from Step 3
+    requirements: traceabilityMatrix, // Full matrix from Step 3
 
-  coverage_statistics: {
-    total_requirements: totalRequirements,
-    fully_covered: fullyCovered,
-    partially_covered: partialCoverage.length,
-    uncovered: uncoveredRequirements.length,
-    overall_coverage_percentage: coveragePercentage,
+    coverage_statistics: {
+        total_requirements: totalRequirements,
+        fully_covered: fullyCovered,
+        partially_covered: partialCoverage.length,
+        uncovered: uncoveredRequirements.length,
+        overall_coverage_percentage: coveragePercentage,
 
-    priority_breakdown: {
-      P0: { total: p0Total, covered: p0Covered, percentage: p0CoveragePercentage },
-      P1: { total: p1Total, covered: p1Covered, percentage: p1CoveragePercentage },
-      P2: { total: p2Total, covered: p2Covered, percentage: p2CoveragePercentage },
-      P3: { total: p3Total, covered: p3Covered, percentage: p3CoveragePercentage },
+        priority_breakdown: {
+            P0: { total: p0Total, covered: p0Covered, percentage: p0CoveragePercentage },
+            P1: { total: p1Total, covered: p1Covered, percentage: p1CoveragePercentage },
+            P2: { total: p2Total, covered: p2Covered, percentage: p2CoveragePercentage },
+            P3: { total: p3Total, covered: p3Covered, percentage: p3CoveragePercentage },
+        },
     },
-  },
 
-  gap_analysis: {
-    critical_gaps: criticalGaps,
-    high_gaps: highGaps,
-    medium_gaps: mediumGaps,
-    low_gaps: lowGaps,
-    partial_coverage_items: partialCoverage,
-    unit_only_items: unitOnlyCoverage,
-  },
+    gap_analysis: {
+        critical_gaps: criticalGaps,
+        high_gaps: highGaps,
+        medium_gaps: mediumGaps,
+        low_gaps: lowGaps,
+        partial_coverage_items: partialCoverage,
+        unit_only_items: unitOnlyCoverage,
+    },
 
-  coverage_heuristics: {
-    endpoint_gaps: endpointCoverageGaps,
-    auth_negative_path_gaps: authCoverageGaps,
-    happy_path_only_gaps: errorPathGaps,
-    counts: heuristicGapCounts,
-  },
+    coverage_heuristics: {
+        endpoint_gaps: endpointCoverageGaps,
+        auth_negative_path_gaps: authCoverageGaps,
+        happy_path_only_gaps: errorPathGaps,
+        counts: heuristicGapCounts,
+    },
 
-  recommendations: recommendations,
+    recommendations: recommendations,
 };
 ```
 
@@ -383,21 +403,21 @@ If `resolvedMode` is `sequential`, execute sections 1→7 in order.
 
 - **If `{outputFile}` does not exist** (first save), create it using the workflow template (if available) with YAML frontmatter:
 
-  ```yaml
-  ---
-  stepsCompleted: ['step-04-analyze-gaps']
-  lastStep: 'step-04-analyze-gaps'
-  lastSaved: '{date}'
-  ---
-  ```
+    ```yaml
+    ---
+    stepsCompleted: ['step-04-analyze-gaps']
+    lastStep: 'step-04-analyze-gaps'
+    lastSaved: '{date}'
+    ---
+    ```
 
-  Then write this step's output below the frontmatter.
+    Then write this step's output below the frontmatter.
 
 - **If `{outputFile}` already exists**, update:
-  - Add `'step-04-analyze-gaps'` to `stepsCompleted` array (only if not already present)
-  - Set `lastStep: 'step-04-analyze-gaps'`
-  - Set `lastSaved: '{date}'`
-  - Append this step's output to the appropriate section of the document.
+    - Add `'step-04-analyze-gaps'` to `stepsCompleted` array (only if not already present)
+    - Set `lastStep: 'step-04-analyze-gaps'`
+    - Set `lastSaved: '{date}'`
+    - Append this step's output to the appropriate section of the document.
 
 Load next step: `{nextStepFile}`
 

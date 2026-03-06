@@ -9,7 +9,9 @@
         "test:headed": "playwright test --headed",
         "test:debug": "playwright test --debug",
         "test:auth": "playwright test tests/e2e/auth",
-        "report": "playwright show-report"
+        "report": "playwright show-report",
+        "lint": "eslint .",
+        "format": "prettier --write ."
     },
     "keywords": [
         "playwright",
@@ -20,10 +22,18 @@
     "author": "QA Team",
     "license": "ISC",
     "devDependencies": {
+        "@eslint/js": "^10.0.1",
         "@playwright/test": "^1.42.0",
         "@types/node": "^20.11.24",
+        "@typescript-eslint/eslint-plugin": "^8.56.1",
+        "@typescript-eslint/parser": "^8.56.1",
         "dotenv": "^16.4.5",
+        "eslint": "^10.0.2",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-playwright": "^2.9.0",
         "monocart-reporter": "^2.1.2",
-        "typescript": "^5.3.3"
+        "prettier": "^3.8.1",
+        "typescript": "^5.3.3",
+        "typescript-eslint": "^8.56.1"
     }
 }

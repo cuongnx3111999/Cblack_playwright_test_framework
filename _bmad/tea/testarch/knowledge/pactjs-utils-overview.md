@@ -92,21 +92,21 @@ import { PactV3 } from '@pact-foundation/pact';
 import { createProviderState } from '@seontechnologies/pactjs-utils';
 
 const provider = new PactV3({
-  consumer: 'my-frontend',
-  provider: 'my-api',
-  dir: './pacts',
+    consumer: 'my-frontend',
+    provider: 'my-api',
+    dir: './pacts',
 });
 
 it('should get user by id', async () => {
-  await provider
-    .given(...createProviderState({ name: 'user exists', params: { id: 1 } }))
-    .uponReceiving('a request for user 1')
-    .withRequest({ method: 'GET', path: '/users/1' })
-    .willRespondWith({ status: 200, body: { id: 1, name: 'John' } })
-    .executeTest(async (mockServer) => {
-      const res = await fetch(`${mockServer.url}/users/1`);
-      expect(res.status).toBe(200);
-    });
+    await provider
+        .given(...createProviderState({ name: 'user exists', params: { id: 1 } }))
+        .uponReceiving('a request for user 1')
+        .withRequest({ method: 'GET', path: '/users/1' })
+        .willRespondWith({ status: 200, body: { id: 1, name: 'John' } })
+        .executeTest(async (mockServer) => {
+            const res = await fetch(`${mockServer.url}/users/1`);
+            expect(res.status).toBe(200);
+        });
 });
 ```
 
@@ -117,17 +117,17 @@ import { Verifier } from '@pact-foundation/pact';
 import { buildVerifierOptions, createRequestFilter } from '@seontechnologies/pactjs-utils';
 
 const opts = buildVerifierOptions({
-  provider: 'my-api',
-  port: '3001',
-  includeMainAndDeployed: true,
-  stateHandlers: {
-    'user exists': async (params) => {
-      await db.seed({ users: [{ id: params?.id }] });
+    provider: 'my-api',
+    port: '3001',
+    includeMainAndDeployed: true,
+    stateHandlers: {
+        'user exists': async (params) => {
+            await db.seed({ users: [{ id: params?.id }] });
+        },
     },
-  },
-  requestFilter: createRequestFilter({
-    tokenGenerator: () => 'test-token-123',
-  }),
+    requestFilter: createRequestFilter({
+        tokenGenerator: () => 'test-token-123',
+    }),
 });
 
 await new Verifier(opts).verifyProvider();
@@ -157,20 +157,20 @@ await new Verifier(opts).verifyProvider();
 ```typescript
 // ❌ Don't assemble VerifierOptions manually
 const opts: VerifierOptions = {
-  provider: 'my-api',
-  providerBaseUrl: 'http://localhost:3001',
-  pactBrokerUrl: process.env.PACT_BROKER_BASE_URL,
-  pactBrokerToken: process.env.PACT_BROKER_TOKEN,
-  publishVerificationResult: process.env.CI === 'true',
-  providerVersion: process.env.GIT_SHA || 'dev',
-  consumerVersionSelectors: [{ mainBranch: true }, { deployedOrReleased: true }],
-  stateHandlers: {
-    /* ... */
-  },
-  requestFilter: (req, res, next) => {
-    /* ... */
-  },
-  // ... 20 more lines
+    provider: 'my-api',
+    providerBaseUrl: 'http://localhost:3001',
+    pactBrokerUrl: process.env.PACT_BROKER_BASE_URL,
+    pactBrokerToken: process.env.PACT_BROKER_TOKEN,
+    publishVerificationResult: process.env.CI === 'true',
+    providerVersion: process.env.GIT_SHA || 'dev',
+    consumerVersionSelectors: [{ mainBranch: true }, { deployedOrReleased: true }],
+    stateHandlers: {
+        /* ... */
+    },
+    requestFilter: (req, res, next) => {
+        /* ... */
+    },
+    // ... 20 more lines
 };
 ```
 
@@ -179,13 +179,13 @@ const opts: VerifierOptions = {
 ```typescript
 // ✅ Single call handles all configuration
 const opts = buildVerifierOptions({
-  provider: 'my-api',
-  port: '3001',
-  includeMainAndDeployed: true,
-  stateHandlers: {
-    /* ... */
-  },
-  requestFilter: createRequestFilter({ tokenGenerator: () => 'token' }),
+    provider: 'my-api',
+    port: '3001',
+    includeMainAndDeployed: true,
+    stateHandlers: {
+        /* ... */
+    },
+    requestFilter: createRequestFilter({ tokenGenerator: () => 'token' }),
 });
 ```
 

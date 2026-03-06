@@ -44,9 +44,9 @@ Determine execution mode, verify framework readiness, and load the necessary art
 **Auto-Detection Algorithm** (when `test_stack_type` is `"auto"` or not configured):
 
 - Scan `{project-root}` for project manifests:
-  - **Frontend indicators**: `package.json` with react/vue/angular/next dependencies, `playwright.config.*`, `vite.config.*`, `webpack.config.*`
-  - **Backend indicators**: `pyproject.toml`, `pom.xml`/`build.gradle`, `go.mod`, `*.csproj`/`*.sln`, `Gemfile`, `Cargo.toml`
-  - **Both present** = `fullstack`; only frontend = `frontend`; only backend = `backend`
+    - **Frontend indicators**: `package.json` with react/vue/angular/next dependencies, `playwright.config.*`, `vite.config.*`, `webpack.config.*`
+    - **Backend indicators**: `pyproject.toml`, `pom.xml`/`build.gradle`, `go.mod`, `*.csproj`/`*.sln`, `Gemfile`, `Cargo.toml`
+    - **Both present** = `fullstack`; only frontend = `frontend`; only backend = `backend`
 - Explicit `test_stack_type` config value overrides auto-detection
 - **Backward compatibility**: if `test_stack_type` is not in config, treat as `"auto"` (preserves current frontend behavior for existing installs)
 
@@ -205,21 +205,21 @@ Summarize loaded artifacts, framework, and knowledge fragments, then proceed.
 
 - **If `{outputFile}` does not exist** (first save), create it with YAML frontmatter:
 
-  ```yaml
-  ---
-  stepsCompleted: ['step-01-preflight-and-context']
-  lastStep: 'step-01-preflight-and-context'
-  lastSaved: '{date}'
-  ---
-  ```
+    ```yaml
+    ---
+    stepsCompleted: ['step-01-preflight-and-context']
+    lastStep: 'step-01-preflight-and-context'
+    lastSaved: '{date}'
+    ---
+    ```
 
-  Then write this step's output below the frontmatter.
+    Then write this step's output below the frontmatter.
 
 - **If `{outputFile}` already exists**, update:
-  - Add `'step-01-preflight-and-context'` to `stepsCompleted` array (only if not already present)
-  - Set `lastStep: 'step-01-preflight-and-context'`
-  - Set `lastSaved: '{date}'`
-  - Append this step's output to the appropriate section.
+    - Add `'step-01-preflight-and-context'` to `stepsCompleted` array (only if not already present)
+    - Set `lastStep: 'step-01-preflight-and-context'`
+    - Set `lastSaved: '{date}'`
+    - Append this step's output to the appropriate section.
 
 **Update `inputDocuments`**: Set `inputDocuments` in the output template frontmatter to the list of artifact paths loaded in this step (e.g., knowledge fragments, test design documents, configuration files).
 

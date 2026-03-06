@@ -27,33 +27,33 @@ import { PactV3, MatchersV3 } from '@pact-foundation/pact';
 import { createProviderState } from '@seontechnologies/pactjs-utils';
 
 const provider = new PactV3({
-  consumer: 'movie-web',
-  provider: 'SampleMoviesAPI',
-  dir: './pacts',
+    consumer: 'movie-web',
+    provider: 'SampleMoviesAPI',
+    dir: './pacts',
 });
 
 describe('Movie API Contract', () => {
-  it('should return movie by id', async () => {
-    // createProviderState returns [stateName, JsonMap] tuple
-    const providerState = createProviderState({
-      name: 'movie with id 1 exists',
-      params: { id: 1, name: 'Inception', year: 2010 },
-    });
+    it('should return movie by id', async () => {
+        // createProviderState returns [stateName, JsonMap] tuple
+        const providerState = createProviderState({
+            name: 'movie with id 1 exists',
+            params: { id: 1, name: 'Inception', year: 2010 },
+        });
 
-    await provider
-      .given(...providerState) // Spread tuple into .given(name, params)
-      .uponReceiving('a request for movie 1')
-      .withRequest({ method: 'GET', path: '/movies/1' })
-      .willRespondWith({
-        status: 200,
-        body: MatchersV3.like({ id: 1, name: 'Inception', year: 2010 }),
-      })
-      .executeTest(async (mockServer) => {
-        const res = await fetch(`${mockServer.url}/movies/1`);
-        const movie = await res.json();
-        expect(movie.name).toBe('Inception');
-      });
-  });
+        await provider
+            .given(...providerState) // Spread tuple into .given(name, params)
+            .uponReceiving('a request for movie 1')
+            .withRequest({ method: 'GET', path: '/movies/1' })
+            .willRespondWith({
+                status: 200,
+                body: MatchersV3.like({ id: 1, name: 'Inception', year: 2010 }),
+            })
+            .executeTest(async (mockServer) => {
+                const res = await fetch(`${mockServer.url}/movies/1`);
+                const movie = await res.json();
+                expect(movie.name).toBe('Inception');
+            });
+    });
 });
 ```
 
@@ -79,12 +79,12 @@ import { toJsonMap } from '@seontechnologies/pactjs-utils';
 // - array → comma-separated string via String() (e.g., [1,2,3] → "1,2,3")
 
 const params = toJsonMap({
-  id: 42,
-  name: 'John Doe',
-  active: true,
-  score: null,
-  createdAt: new Date('2025-01-15T10:00:00Z'),
-  metadata: { role: 'admin', permissions: ['read', 'write'] },
+    id: 42,
+    name: 'John Doe',
+    active: true,
+    score: null,
+    createdAt: new Date('2025-01-15T10:00:00Z'),
+    metadata: { role: 'admin', permissions: ['read', 'write'] },
 });
 
 // Result:
@@ -114,15 +114,15 @@ const emptyState = createProviderState({ name: 'no movies exist', params: {} });
 // Returns: ['no movies exist', {}]
 
 await provider
-  .given(...emptyState)
-  .uponReceiving('a request when no movies exist')
-  .withRequest({ method: 'GET', path: '/movies' })
-  .willRespondWith({ status: 200, body: [] })
-  .executeTest(async (mockServer) => {
-    const res = await fetch(`${mockServer.url}/movies`);
-    const movies = await res.json();
-    expect(movies).toEqual([]);
-  });
+    .given(...emptyState)
+    .uponReceiving('a request when no movies exist')
+    .withRequest({ method: 'GET', path: '/movies' })
+    .willRespondWith({ status: 200, body: [] })
+    .executeTest(async (mockServer) => {
+        const res = await fetch(`${mockServer.url}/movies`);
+        const movies = await res.json();
+        expect(movies).toEqual([]);
+    });
 ```
 
 ### Example 4: Multiple Provider States
@@ -133,18 +133,18 @@ import { createProviderState } from '@seontechnologies/pactjs-utils';
 // Some interactions require multiple provider states
 // Call .given() multiple times with different states
 await provider
-  .given(...createProviderState({ name: 'user is authenticated', params: { userId: 1 } }))
-  .given(...createProviderState({ name: 'movie with id 5 exists', params: { id: 5 } }))
-  .uponReceiving('an authenticated request for movie 5')
-  .withRequest({
-    method: 'GET',
-    path: '/movies/5',
-    headers: { Authorization: MatchersV3.like('Bearer token') },
-  })
-  .willRespondWith({ status: 200, body: MatchersV3.like({ id: 5 }) })
-  .executeTest(async (mockServer) => {
-    // test implementation
-  });
+    .given(...createProviderState({ name: 'user is authenticated', params: { userId: 1 } }))
+    .given(...createProviderState({ name: 'movie with id 5 exists', params: { id: 5 } }))
+    .uponReceiving('an authenticated request for movie 5')
+    .withRequest({
+        method: 'GET',
+        path: '/movies/5',
+        headers: { Authorization: MatchersV3.like('Bearer token') },
+    })
+    .willRespondWith({ status: 200, body: MatchersV3.like({ id: 5 }) })
+    .executeTest(async (mockServer) => {
+        // test implementation
+    });
 ```
 
 ## Key Points
@@ -170,9 +170,9 @@ await provider
 ```typescript
 // ❌ Manual casting — verbose, error-prone, no type safety
 provider.given('user exists', {
-  id: 1 as unknown as string,
-  createdAt: new Date().toISOString(),
-  metadata: JSON.stringify({ role: 'admin' }),
+    id: 1 as unknown as string,
+    createdAt: new Date().toISOString(),
+    metadata: JSON.stringify({ role: 'admin' }),
 } as JsonMap);
 ```
 
@@ -181,10 +181,10 @@ provider.given('user exists', {
 ```typescript
 // ✅ Automatic conversion with type safety
 provider.given(
-  ...createProviderState({
-    name: 'user exists',
-    params: { id: 1, createdAt: new Date(), metadata: { role: 'admin' } },
-  }),
+    ...createProviderState({
+        name: 'user exists',
+        params: { id: 1, createdAt: new Date(), metadata: { role: 'admin' } },
+    }),
 );
 ```
 
@@ -201,8 +201,8 @@ provider.given('a user with id 1 exists', { id: '1' });
 ```typescript
 // ✅ Define state names as constants shared between consumer and provider
 const STATES = {
-  USER_EXISTS: 'user with id exists',
-  NO_USERS: 'no users exist',
+    USER_EXISTS: 'user with id exists',
+    NO_USERS: 'no users exist',
 } as const;
 
 provider.given(...createProviderState({ name: STATES.USER_EXISTS, params: { id: 1 } }));

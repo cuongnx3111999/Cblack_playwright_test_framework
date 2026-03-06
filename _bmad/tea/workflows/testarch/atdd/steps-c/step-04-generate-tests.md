@@ -85,67 +85,78 @@ const subagentContext = {
 
 ```javascript
 const normalizeUserExecutionMode = (mode) => {
-  if (typeof mode !== 'string') return null;
-  const normalized = mode.trim().toLowerCase().replace(/[-_]/g, ' ').replace(/\s+/g, ' ');
+    if (typeof mode !== 'string') return null;
+    const normalized = mode.trim().toLowerCase().replace(/[-_]/g, ' ').replace(/\s+/g, ' ');
 
-  if (normalized === 'auto') return 'auto';
-  if (normalized === 'sequential') return 'sequential';
-  if (normalized === 'subagent' || normalized === 'sub agent' || normalized === 'subagents' || normalized === 'sub agents') {
-    return 'subagent';
-  }
-  if (normalized === 'agent team' || normalized === 'agent teams' || normalized === 'agentteam') {
-    return 'agent-team';
-  }
+    if (normalized === 'auto') return 'auto';
+    if (normalized === 'sequential') return 'sequential';
+    if (
+        normalized === 'subagent' ||
+        normalized === 'sub agent' ||
+        normalized === 'subagents' ||
+        normalized === 'sub agents'
+    ) {
+        return 'subagent';
+    }
+    if (normalized === 'agent team' || normalized === 'agent teams' || normalized === 'agentteam') {
+        return 'agent-team';
+    }
 
-  return null;
+    return null;
 };
 
 const normalizeConfigExecutionMode = (mode) => {
-  if (mode === 'subagent') return 'subagent';
-  if (mode === 'auto' || mode === 'sequential' || mode === 'subagent' || mode === 'agent-team') {
-    return mode;
-  }
-  return null;
+    if (mode === 'subagent') return 'subagent';
+    if (mode === 'auto' || mode === 'sequential' || mode === 'subagent' || mode === 'agent-team') {
+        return mode;
+    }
+    return null;
 };
 
 // Explicit user instruction in the active run takes priority over config.
-const explicitModeFromUser = normalizeUserExecutionMode(runtime.getExplicitExecutionModeHint?.() || null);
+const explicitModeFromUser = normalizeUserExecutionMode(
+    runtime.getExplicitExecutionModeHint?.() || null,
+);
 
-const requestedMode = explicitModeFromUser || normalizeConfigExecutionMode(subagentContext.config.execution_mode) || 'auto';
+const requestedMode =
+    explicitModeFromUser ||
+    normalizeConfigExecutionMode(subagentContext.config.execution_mode) ||
+    'auto';
 const probeEnabled = subagentContext.config.capability_probe;
 
 const supports = {
-  subagent: runtime.canLaunchSubagents?.() === true,
-  agentTeam: runtime.canLaunchAgentTeams?.() === true,
+    subagent: runtime.canLaunchSubagents?.() === true,
+    agentTeam: runtime.canLaunchAgentTeams?.() === true,
 };
 
 let resolvedMode = requestedMode;
 
 if (requestedMode === 'auto') {
-  if (supports.agentTeam) resolvedMode = 'agent-team';
-  else if (supports.subagent) resolvedMode = 'subagent';
-  else resolvedMode = 'sequential';
+    if (supports.agentTeam) resolvedMode = 'agent-team';
+    else if (supports.subagent) resolvedMode = 'subagent';
+    else resolvedMode = 'sequential';
 } else if (probeEnabled && requestedMode === 'agent-team' && !supports.agentTeam) {
-  resolvedMode = supports.subagent ? 'subagent' : 'sequential';
+    resolvedMode = supports.subagent ? 'subagent' : 'sequential';
 } else if (probeEnabled && requestedMode === 'subagent' && !supports.subagent) {
-  resolvedMode = 'sequential';
+    resolvedMode = 'sequential';
 }
 
 subagentContext.execution = {
-  requestedMode,
-  resolvedMode,
-  probeEnabled,
-  supports,
+    requestedMode,
+    resolvedMode,
+    probeEnabled,
+    supports,
 };
 
 if (!probeEnabled && (requestedMode === 'agent-team' || requestedMode === 'subagent')) {
-  const unsupportedRequestedMode =
-    (requestedMode === 'agent-team' && !supports.agentTeam) || (requestedMode === 'subagent' && !supports.subagent);
+    const unsupportedRequestedMode =
+        (requestedMode === 'agent-team' && !supports.agentTeam) ||
+        (requestedMode === 'subagent' && !supports.subagent);
 
-  if (unsupportedRequestedMode) {
-    subagentContext.execution.error = `Requested execution mode "${requestedMode}" is unavailable because capability probing is disabled.`;
-    throw new Error(subagentContext.execution.error);
-  }
+    if (unsupportedRequestedMode) {
+        subagentContext.execution.error = `Requested execution mode "${requestedMode}" is unavailable because capability probing is disabled.`;
+        throw new Error(subagentContext.execution.error);
+    }
 }
 ```
 
@@ -167,8 +178,8 @@ If probing is disabled, honor the requested mode strictly. If that mode cannot b
 - **Output File:** `/tmp/tea-atdd-api-tests-${timestamp}.json`
 - **Context:** Pass `subagentContext`
 - **Execution:**
-  - `agent-team` or `subagent`: launch non-blocking
-  - `sequential`: run blocking and wait before next dispatch
+    - `agent-team` or `subagent`: launch non-blocking
+    - `sequential`: run blocking and wait before next dispatch
 - **TDD Phase:** RED (failing tests)
 
 **System Action:**
@@ -191,8 +202,8 @@ If probing is disabled, honor the requested mode strictly. If that mode cannot b
 - **Output File:** `/tmp/tea-atdd-e2e-tests-${timestamp}.json`
 - **Context:** Pass `subagentContext`
 - **Execution:**
-  - `agent-team` or `subagent`: launch non-blocking
-  - `sequential`: run blocking and wait before next dispatch
+    - `agent-team` or `subagent`: launch non-blocking
+    - `sequential`: run blocking and wait before next dispatch
 - **TDD Phase:** RED (failing tests)
 
 **System Action:**
@@ -237,7 +248,7 @@ const apiOutputExists = fs.existsSync(`/tmp/tea-atdd-api-tests-${timestamp}.json
 const e2eOutputExists = fs.existsSync(`/tmp/tea-atdd-e2e-tests-${timestamp}.json`);
 
 if (!apiOutputExists || !e2eOutputExists) {
-  throw new Error('One or both subagent outputs missing!');
+    throw new Error('One or both subagent outputs missing!');
 }
 ```
 

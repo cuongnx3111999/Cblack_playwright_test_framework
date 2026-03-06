@@ -43,9 +43,9 @@ For each acceptance criterion:
 - Mark coverage status: FULL / PARTIAL / NONE / UNIT-ONLY / INTEGRATION-ONLY
 - Record test level and priority
 - Record heuristic signals:
-  - Endpoint coverage present/missing (for API-impacting criteria)
-  - Auth/authz coverage present/missing (positive and negative paths)
-  - Error-path coverage present/missing (validation, timeout, network/server failures)
+    - Endpoint coverage present/missing (for API-impacting criteria)
+    - Auth/authz coverage present/missing (positive and negative paths)
+    - Error-path coverage present/missing (validation, timeout, network/server failures)
 
 ---
 
@@ -67,21 +67,21 @@ Ensure:
 
 - **If `{outputFile}` does not exist** (first save), create it using the workflow template (if available) with YAML frontmatter:
 
-  ```yaml
-  ---
-  stepsCompleted: ['step-03-map-criteria']
-  lastStep: 'step-03-map-criteria'
-  lastSaved: '{date}'
-  ---
-  ```
+    ```yaml
+    ---
+    stepsCompleted: ['step-03-map-criteria']
+    lastStep: 'step-03-map-criteria'
+    lastSaved: '{date}'
+    ---
+    ```
 
-  Then write this step's output below the frontmatter.
+    Then write this step's output below the frontmatter.
 
 - **If `{outputFile}` already exists**, update:
-  - Add `'step-03-map-criteria'` to `stepsCompleted` array (only if not already present)
-  - Set `lastStep: 'step-03-map-criteria'`
-  - Set `lastSaved: '{date}'`
-  - Append this step's output to the appropriate section of the document.
+    - Add `'step-03-map-criteria'` to `stepsCompleted` array (only if not already present)
+    - Set `lastStep: 'step-03-map-criteria'`
+    - Set `lastSaved: '{date}'`
+    - Append this step's output to the appropriate section of the document.
 
 Load next step: `{nextStepFile}`
 

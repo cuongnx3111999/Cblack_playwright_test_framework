@@ -63,14 +63,14 @@ Record test IDs, describe blocks, and priority markers if present.
 Capture explicit coverage signals so Phase 1 can detect common blind spots:
 
 - API endpoint coverage
-  - Inventory endpoints referenced by requirements/specs and endpoints exercised by API tests
-  - Mark endpoints with no direct tests
+    - Inventory endpoints referenced by requirements/specs and endpoints exercised by API tests
+    - Mark endpoints with no direct tests
 - Authentication/authorization coverage
-  - Detect tests for login/session/token flows and permission-denied paths
-  - Mark auth/authz requirements with missing negative-path tests
+    - Detect tests for login/session/token flows and permission-denied paths
+    - Mark auth/authz requirements with missing negative-path tests
 - Error-path coverage
-  - Detect validation, timeout, network-failure, and server-error scenarios
-  - Mark criteria with happy-path-only tests
+    - Detect validation, timeout, network-failure, and server-error scenarios
+    - Mark criteria with happy-path-only tests
 
 Record these findings in step output as `coverage_heuristics` for Step 3/4.
 
@@ -82,21 +82,21 @@ Record these findings in step output as `coverage_heuristics` for Step 3/4.
 
 - **If `{outputFile}` does not exist** (first save), create it using the workflow template (if available) with YAML frontmatter:
 
-  ```yaml
-  ---
-  stepsCompleted: ['step-02-discover-tests']
-  lastStep: 'step-02-discover-tests'
-  lastSaved: '{date}'
-  ---
-  ```
+    ```yaml
+    ---
+    stepsCompleted: ['step-02-discover-tests']
+    lastStep: 'step-02-discover-tests'
+    lastSaved: '{date}'
+    ---
+    ```
 
-  Then write this step's output below the frontmatter.
+    Then write this step's output below the frontmatter.
 
 - **If `{outputFile}` already exists**, update:
-  - Add `'step-02-discover-tests'` to `stepsCompleted` array (only if not already present)
-  - Set `lastStep: 'step-02-discover-tests'`
-  - Set `lastSaved: '{date}'`
-  - Append this step's output to the appropriate section of the document.
+    - Add `'step-02-discover-tests'` to `stepsCompleted` array (only if not already present)
+    - Set `lastStep: 'step-02-discover-tests'`
+    - Set `lastSaved: '{date}'`
+    - Append this step's output to the appropriate section of the document.
 
 Load next step: `{nextStepFile}`
 

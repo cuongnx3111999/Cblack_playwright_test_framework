@@ -17,7 +17,7 @@ setup('Global SSO Setup - Lấy Authentication State cho toàn dự án', async 
 
     // Bước 1: Điều hướng tới trang đăng nhập
     // *Lưu ý: Bạn cần thay bằng URL hoặc sử dụng cấu hình baseURL hiện có*
-    // await page.goto('/login'); 
+    // await page.goto('/login');
 
     // Bước 2: Thực hiện hành động đăng nhập lấy từ mock user (Thực tế bạn dùng LoginFlow tại đây cũng được)
     // await page.locator('#email').fill(USERS.ADMIN.email);

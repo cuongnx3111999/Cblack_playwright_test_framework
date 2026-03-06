@@ -50,28 +50,31 @@ e2e-tests/
 ## 3. Page Object Model & Định vị phần tử (Locators)
 
 ### 3.1. Tách biệt Locator qua file JSON
+
 Tránh gõ cứng ký tự Selector vào code. Các file Class Page sẽ đọc selector từ file data.
 
 ```json
 // data/locators/login.json
 {
-  "emailInput": "#email",
-  "passwordInput": "#password",
-  "loginBtn": "[data-testid='login-btn']"
+    "emailInput": "#email",
+    "passwordInput": "#password",
+    "loginBtn": "[data-testid='login-btn']"
 }
 ```
 
 ### 3.2. Tiêu chuẩn Class Page
+
 Chỉ chứa các hàm tương tác cơ bản (Điền, Bấm, Lấy Text).
+
 ```typescript
 import locators from '../../data/locators/login.json';
 
 export class LoginPage {
-  constructor(public readonly page: Page) {}
+    constructor(public readonly page: Page) {}
 
-  async enterEmail(email: string) {
-    await this.page.locator(locators.emailInput).fill(email);
-  }
+    async enterEmail(email: string) {
+        await this.page.locator(locators.emailInput).fill(email);
+    }
 }
 ```
 
@@ -87,26 +90,27 @@ import { test as base } from '@playwright/test';
 import { LoginFlow } from '../flows/LoginFlow';
 
 type AppFixtures = {
-  loginFlow: LoginFlow;
+    loginFlow: LoginFlow;
 };
 
 export const test = base.extend<AppFixtures>({
-  loginFlow: async ({ page }, use) => {
-    await use(new LoginFlow(page));
-  }
+    loginFlow: async ({ page }, use) => {
+        await use(new LoginFlow(page));
+    },
 });
 export { expect } from '@playwright/test';
 ```
 
 Test file cuối cùng sẽ cực kỳ ngắn gọn, dễ đọc:
+
 ```typescript
 // tests/e2e/auth.spec.ts
 import { test, expect } from '../../fixtures/base.fixture';
 import { USERS } from '../../data/users.constants';
 
 test('Should login successfully', async ({ loginFlow }) => {
-  const dashboard = await loginFlow.loginAsUser(USERS.ADMIN);
-  await expect(dashboard.welcomeTitle).toBeVisible(); // Assertion luôn ở cấp Test
+    const dashboard = await loginFlow.loginAsUser(USERS.ADMIN);
+    await expect(dashboard.welcomeTitle).toBeVisible(); // Assertion luôn ở cấp Test
 });
 ```
 
@@ -126,10 +130,12 @@ Lỗi phổ biến nhất của E2E Automation là Timeout và Flaky (lúc pass 
 ## 6. Cấu hình Playwright & Khởi tạo (Global Configuration)
 
 ### 6.1. File `playwright.config.ts`
+
 - **Parallelism (Song song)**: Mặc định `fullyParallel: false` để đáp ứng các test case có tính tuần tự, hoặc tận dụng account chung data mà không đụng độ ghi đè.
 - **Global Setup/Teardown**: Duy trì logic ngắn gọn cực hạn. Dành cho việc Login 1 lần (Single Sign-On) trước khi chạy cả bộ Suite, nạp state vào process.
 
 ### 6.2. Artifacts (Bằng chứng Test)
+
 - **TẮT Video Recording (`video: off`)** để tiết kiệm dung lượng ổ cứng môi trường CI/CD.
 - **BẬT Trace (`trace: 'on-first-retry'`)**. Trace snapshot toàn bộ DOM, network, console mạnh mẽ hơn Video mà dung lượng rất nhẹ.
 - **Tự động chụp ảnh khi fail**: `screenshot: 'only-on-failure'`. Tự do gọi `page.screenshot(...)` thủ công để chụp lại các checkpoint quan trọng trong mã nguồn nếu cần cho biên bản báo cáo.
@@ -141,6 +147,6 @@ Lỗi phổ biến nhất của E2E Automation là Timeout và Flaky (lúc pass 
 Toàn bộ quá trình Automation sẽ được tích hợp vào hệ thống Tích hợp/Giao hàng liên tục (CI/CD):
 
 1.  **Monocart Reporter (Node.js thuần)**: Loại bỏ các Reporter yêu cầu cài đặt Java phức tạp như Allure. `Monocart` cung cấp hệ sinh thái HTML Report siêu việt, gom đủ Coverage, Trace, Log chỉ bằng setup 1-click. Ngoài ra Playwright HTML default vẫn được duy trì làm phương án 2.
-2.  **Trình kích hoạt CI (GitHub Actions)**: 
+2.  **Trình kích hoạt CI (GitHub Actions)**:
     - Ưu tiên chế độ Kích hoạt Thủ công (`workflow_dispatch`) qua giao diện để linh hoạt thời điểm test, tiết kiệm runner resources.
     - Export Report sang `GitHub Pages` dưới dạng trang tĩnh Public/Private URL cho toàn Project Member tra cứu dễ dàng mỗi khi chạy xong.
